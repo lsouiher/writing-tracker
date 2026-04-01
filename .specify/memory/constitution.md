@@ -1,50 +1,238 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+  Sync Impact Report
+  ==================
+  Version change: 0.0.0 → 1.0.0 (MAJOR — initial ratification)
+
+  Added principles:
+    I.   Simplicity Is the First Feature
+    II.  Dependencies
+    III. Code Structure
+    IV.  Data and Persistence
+    V.   APIs and Server-Side Logic
+    VI.  Authentication and Authorization
+    VII. Frontend
+    VIII. Testing
+    IX.  Performance
+    X.   Security
+
+  Added sections:
+    - Core Principles (10 principles)
+    - Governance
+
+  Removed sections: none (initial fill from template)
+
+  Templates checked:
+    ✅ plan-template.md — "Constitution Check" section exists; gates
+       are dynamically derived from constitution at plan time. No update needed.
+    ✅ spec-template.md — requirements and success criteria sections align
+       with principles (testing, performance, security). No update needed.
+    ✅ tasks-template.md — phase structure supports security hardening,
+       performance optimization, and testing tasks. No update needed.
+    ✅ No `.specify/templates/commands/` directory exists.
+    ✅ No README.md or quickstart docs exist yet. Nothing to update.
+
+  Follow-up TODOs:
+    - RATIFICATION_DATE set to today (2026-04-01). Update if a
+      different adoption date is intended.
+-->
+
+# IAlgeria Constitution
+
+> This document is the law. It supersedes all other conventions.
+> Deviations require a comment explaining why.
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Simplicity Is the First Feature
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+Every decision defaults to the simplest option that works.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+- Prefer one file over two files. Prefer one table over two tables.
+  Prefer one call over two.
+- If a feature can ship without a new abstraction, ship it without one.
+- Complexity MUST be justified in a comment. If you cannot explain why
+  it is complex, make it simple.
+- No speculative architecture. Build for today's requirements, not
+  imagined future ones.
+- If a platform built-in covers the use case, use it. Do not wrap it
+  in a custom layer.
+- When two approaches are equally valid, always choose the one that is
+  easier to delete.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Dependencies
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+Every new dependency is a long-term maintenance cost.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+- Every dependency MUST be justified before being added.
+- Prefer fewer, well-maintained dependencies over many narrow ones.
+- Never add a library to solve a problem that can be solved with
+  20 lines of code.
+- Wrapping a dependency in an abstraction layer is only justified if
+  the wrapper is simpler to use than the underlying tool AND switching
+  cost is a real risk.
+- Dead dependencies MUST be removed immediately, not left to
+  accumulate.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Code Structure
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**One concern per file.** A file that fetches data MUST NOT also render
+UI. A file that handles routing MUST NOT contain business logic.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**Separate layers clearly:**
+- Presentation: what the user sees. No direct data access.
+- Business logic: rules, calculations, decisions. No framework-specific
+  code.
+- Data access: queries, external API calls. No business logic.
+
+**No barrel re-export files.** Import directly from the source file.
+
+**Co-locate tests.** A test file lives next to the file it tests, not
+in a separate tree.
+
+**Name things for what they do, not what they are.**
+`getActiveSubscription()` over `subscriptionHelper()`.
+`formatCurrency()` over `utils`.
+
+### IV. Data and Persistence
+
+**Soft deletes for user-owned data.** Mark records as deleted with a
+timestamp rather than hard-deleting them.
+
+**Never expose internal identifiers in public-facing URLs or APIs.**
+Use opaque, non-sequential identifiers.
+
+**Migrations are append-only.** Never modify a migration that has
+already been applied. Always create a new migration for changes.
+
+**No optional fields without a documented reason.** Default to
+required. If a field is nullable, explain why in a comment.
+
+**Indexes are not optional.** Every foreign key MUST be indexed. Every
+column used in a filter on a large table MUST be indexed.
+
+**No N+1 queries.** If a view needs parent + children, fetch them
+together. Review slow queries before each release.
+
+### V. APIs and Server-Side Logic
+
+**All writes happen server-side.** Client code never mutates data
+directly.
+
+**Third-party webhooks are the source of truth for external state.**
+Never trust a synchronous API response alone for state that a webhook
+will also confirm. Always reconcile via the webhook and persist to
+your own database.
+
+**All secrets are server-side only.** API keys, tokens, and
+credentials MUST never reach the client under any circumstances.
+
+**Rate limiting is mandatory on all public endpoints.** Log usage.
+Enforce limits. Abuse detection is not optional.
+
+**Error responses are consistent across the entire application.** Pick
+one shape for errors and one shape for success. Never deviate.
+
+### VI. Authentication and Authorization
+
+**Authorization is centralized.** Access control logic lives in one
+place — middleware, a guard, or a policy layer — not scattered across
+individual components or handlers.
+
+**Principle of least privilege.** Every user, role, and service has
+only the permissions it needs and nothing more.
+
+**Access levels are explicit and documented.** Define the full set of
+access tiers at the start of the project. Adding a new tier requires
+updating the project spec.
+
+**Never trust client-supplied identity claims.** Always verify
+server-side.
+
+### VII. Frontend
+
+**Render on the server by default.** Only move rendering to the client
+when there is a specific, documented reason — interactivity, browser
+APIs, real-time state.
+
+**No loading states for fast operations.** Show a spinner only for
+operations that will visibly take time. Optimistic UI is preferred
+over spinners where the outcome is predictable.
+
+**No inline styles.** Use the project's styling system. Exceptions
+require a comment.
+
+**Form validation runs on both client and server.** Client validation
+is for UX. Server validation is for correctness. Never rely on client
+validation alone.
+
+**Accessibility is not optional.** Semantic HTML, keyboard navigation,
+and sufficient color contrast are baseline requirements, not
+enhancements.
+
+### VIII. Testing
+
+**Test business logic, not implementation details.** Tests assert
+outcomes and behavior, not internal state or method calls.
+
+**Tests MUST be fast.** No test takes more than 2 seconds. Mock all
+external services and APIs.
+
+**Three test types, used proportionally:**
+- Unit: pure functions and business logic.
+- Integration: the boundary between layers (API handlers, data access).
+- End-to-end: critical user paths only — the shortest path from intent
+  to outcome.
+
+**Tests run before every commit.** CI blocks merges on failing tests.
+A broken test is never merged and fixed later.
+
+**A test that is hard to write is a signal the code is too coupled.**
+Refactor the code, not the test.
+
+### IX. Performance
+
+**Performance is a feature, not a phase.** Do not defer performance
+work to "after launch."
+
+**Measure before optimizing.** Never guess at a bottleneck. Profile
+first.
+
+**Set explicit targets before writing code** — response time, page
+load, query time — and verify them before shipping.
+
+**Media assets are served from a CDN.** Never serve large binary
+assets through the application server.
+
+### X. Security
+
+**Secrets never touch version control.** Use environment variables.
+Rotate any secret that is accidentally committed.
+
+**All user-supplied content is treated as untrusted.** Sanitize before
+storing. Escape before rendering. Never render user content as raw
+markup.
+
+**Privacy and compliance requirements are built in from day one.**
+Data retention, deletion, and export are not features to add later —
+design the data model to support them from the start.
+
+**Dependencies are audited regularly.** Check for known
+vulnerabilities before each release.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- **This constitution supersedes all other conventions.** If a
+  framework's docs, a tutorial, or a library's recommended pattern
+  conflicts with this document, this document wins.
+- **Amendments require a written reason.** No silent updates. If a
+  rule changes, document why.
+- **Complexity MUST be justified.** Any PR that introduces a new
+  abstraction, a new dependency, or a new pattern requires a
+  one-paragraph explanation.
+- **When in doubt, do less.** Ship the simpler version. Extend based
+  on real usage, not assumptions.
+- **Versioning policy:** MAJOR for principle removals or redefinitions.
+  MINOR for new principles or materially expanded guidance. PATCH for
+  clarifications and wording fixes.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-04-01 | **Last Amended**: 2026-04-01

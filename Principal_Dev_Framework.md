@@ -2,7 +2,9 @@
 
 **Spec-Kit × GStack — Concise Reference**
 
-Spec-Kit owns **definition** (what to build, why, how). GStack owns **delivery** (review, test, ship, reflect). Bridge commands connect them. Every specialist output gets a persistent file — not chat residue.
+Spec-Kit owns **definition** (what to build, why, how). GStack owns **delivery** (review, test, ship, reflect). Your CLAUDE.md connects them. Every specialist output gets a persistent file — not chat residue.
+
+> **Status note:** The `gstack-ready` preset, `gstack-bridge` extension, and `/speckit.gstack-*` bridge commands described in the original design docs are **planned but not yet published**. This framework uses both tools side by side today, connected by CLAUDE.md workflow instructions and manual handoff. When the preset/extension ship, drop them in and the manual steps go away.
 
 ---
 
@@ -17,7 +19,8 @@ DEFINE (Spec-Kit)          CHALLENGE (GStack)         BUILD + SHIP (Both)
 /speckit.tasks               (if UI)                   /qa
 /speckit.analyze                                       /cso (if auth/data)
         │                         │                    /ship
-        └──── /speckit.gstack-handoff ────┘            /retro (weekly)
+        └── manual handoff: point GStack ──┘           /retro (weekly)
+            at spec artifacts
 ```
 
 **Exit gates:** Spec locked → Eng Review CLEARED → Task shipped with all delivery gates green.
@@ -35,7 +38,7 @@ All artifacts live in repo. Nothing important stays in chat.
 | Plan | `.specify/specs/<branch>/plan.md` | `/speckit.plan` |
 | Tasks | `.specify/specs/<branch>/tasks.md` | `/speckit.tasks` |
 | Analysis | `.specify/specs/<branch>/analyze.md` | `/speckit.analyze` |
-| Design Doc | `~/.gstack/projects/<project>.md` | `/speckit.gstack-handoff` |
+| Design Doc | `~/.gstack/projects/<project>.md` | Manual (copy spec summary) |
 | Product Review | `specs/<feature>/product-review.md` | `/plan-ceo-review` output |
 | Engineering Review | `specs/<feature>/engineering-review.md` | `/plan-eng-review` output |
 | Code Review | `specs/<feature>/code-review.md` | `/review` output |
@@ -58,24 +61,28 @@ All artifacts live in repo. Nothing important stays in chat.
 /speckit.analyze         # Cross-artifact consistency check (constitution conflicts = critical)
 ```
 
-**Spec template additions** (via `gstack-ready` preset):
+**Add these sections manually to your specs** (the `gstack-ready` preset will automate this when it ships):
+
+**In spec.md:**
 - Acceptance criteria table: ID, criterion, verification type, priority
 - Test dimensions table: flow, type, browsers, data setup
 
-**Plan template additions:**
+**In plan.md:**
 - Architecture diagram (mermaid/ASCII)
 - Edge cases & failure modes table
 - Test plan: unit / integration / browser / security
 - Review gate readiness checklist
 
-**Task template additions per task:**
+**In tasks.md, per task:**
 - Success criteria (from spec)
 - Delivery gates: `[ ] code complete` `[ ] /review` `[ ] /qa` `[ ] /cso` `[ ] /ship`
 
 ### 2. Challenge (30 min – 1 hr)
 
+**Handoff (manual until bridge extension ships):**
+Tell GStack to read your spec artifacts. In Claude Code, paste your spec summary or point the review commands at `.specify/specs/<branch>/spec.md` and `plan.md`. GStack's review skills will work with whatever context you give them — they don't require a design doc in `~/.gstack/projects/`, that's just the ideal.
+
 ```bash
-/speckit.gstack-handoff   # Synthesize spec + plan + tasks → GStack design doc
 /plan-ceo-review          # Is this the right thing to build? Scope decision.
 /plan-eng-review          # Lock architecture, data flow, edge cases, test strategy
 /plan-design-review       # UI changes only — 80-item audit, AI slop detection
@@ -115,35 +122,134 @@ Save to `specs/<feature>/retro.md`. Compare velocity against tasks.md estimates.
 
 ---
 
-## Installation
+## Setup
 
-### One-time setup
+### One-time setup (your machine)
+
+Prerequisites: Node >= 22, Python 3.10+, `uv`, `git`, `bun`, `unzip`
 
 ```bash
+# Bun (required by GStack)
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+
 # Spec-Kit
 uv tool install specify-cli --from git+https://github.com/github/spec-kit.git@v0.4.2
 
-# GStack
+# GStack (global copy — you'll copy into each repo)
 git clone https://github.com/garrytan/gstack.git ~/.claude/skills/gstack
 cd ~/.claude/skills/gstack && ./setup
 ```
 
-### Per-project setup
+### New project
+
+The key insight: `main` holds the scaffold + constitution. All feature work lives on branches that Spec-Kit creates automatically when you run `/speckit.specify`.
 
 ```bash
-# Initialize
+# 1. Scaffold locally
+mkdir my-project && cd my-project
 specify init . --ai claude --here
-specify preset add gstack-ready
-specify extension add gstack-bridge
 
-# Copy GStack into repo (makes project self-describing)
-cp -Rf ~/.claude/skills/gstack .claude/skills/gstack
+# 2. Add GStack locally (NOT committed — too many vendored files)
+mkdir -p .claude/skills && cp -Rf ~/.claude/skills/gstack .claude/skills/gstack
 rm -rf .claude/skills/gstack/.git
-cd .claude/skills/gstack && ./setup
+cd .claude/skills/gstack && ./setup && cd ../../..
 
-# Create feature branch
-git checkout -b feature/001-<description>
-mkdir -p specs/001-<description>
+# 3. Gitignore the skills directory
+echo -e "\n# Claude Code skills (vendored/generated — each dev runs setup locally)\n.claude/skills/" >> .gitignore
+
+# 4. Add CLAUDE.md snippet (see below) and review file dirs
+mkdir -p specs docs/architecture docs/decisions
+
+# 5. Write your constitution (this is project-level, stays on main)
+claude                    # Start Claude Code session (needed before slash commands)
+/speckit.constitution
+
+# 6. Exit Claude Code, then first commit + push — clean baseline for all future branches
+git init && git add -A
+git commit -m "project scaffold: spec-kit + gstack + constitution"
+# Create GitHub repo, then:
+git remote add origin git@github.com:you/my-project.git
+git push -u origin main
+
+# 7. Start first feature — run claude, then spec-kit auto-creates the branch
+claude                    # Start Claude Code session (needed before slash commands)
+/speckit.specify "Build the auth foundation"
+# You're now on a feature branch with spec artifacts
+/speckit.plan
+/speckit.tasks
+/speckit.analyze
+```
+
+### Existing project WITH old Spec-Kit (no GStack yet)
+
+Your `.specify/` folder and specs already exist. You're adding GStack delivery tooling.
+
+```bash
+cd existing-project
+
+# 1. Add GStack locally (NOT committed)
+mkdir -p .claude/skills && cp -Rf ~/.claude/skills/gstack .claude/skills/gstack
+rm -rf .claude/skills/gstack/.git
+cd .claude/skills/gstack && ./setup && cd ../../..
+echo -e "\n# Claude Code skills (vendored/generated)\n.claude/skills/" >> .gitignore
+
+# 2. Add CLAUDE.md snippet (see below)
+
+# 3. Create review file dirs for current/next feature
+mkdir -p specs/<current-feature>
+
+# 4. Commit CLAUDE.md and .gitignore changes to main
+git add -A && git commit -m "add gstack workflow (CLAUDE.md, .gitignore, review dirs)"
+
+# 5. For your NEXT feature, the full cycle applies automatically.
+#    Start a Claude Code session (claude) before running slash commands.
+#    For your CURRENT in-progress feature:
+#    - Point GStack at your existing spec artifacts in the challenge phase
+#    - Start using /review, /qa, /cso, /ship on remaining tasks
+
+# NOTE: Old specs won't have acceptance criteria tables, delivery gate
+# checkboxes, etc. You don't need to retrofit them. If a current spec
+# is thin, re-run /speckit.specify on the feature branch to flesh it out.
+```
+
+### Existing project WITHOUT Spec-Kit (no GStack either)
+
+You have a repo with code but no formal spec workflow. You're adding both tools.
+
+```bash
+cd existing-project
+
+# 1. Initialize Spec-Kit in current repo
+specify init . --ai claude --here --force
+
+# 2. Add GStack locally (NOT committed)
+mkdir -p .claude/skills && cp -Rf ~/.claude/skills/gstack .claude/skills/gstack
+rm -rf .claude/skills/gstack/.git
+cd .claude/skills/gstack && ./setup && cd ../../..
+echo -e "\n# Claude Code skills (vendored/generated)\n.claude/skills/" >> .gitignore
+
+# 3. Add CLAUDE.md snippet (see below)
+mkdir -p specs docs/architecture docs/decisions
+
+# 4. Write your constitution (captures existing project principles)
+#    Start Claude Code first — slash commands run inside it
+claude
+/speckit.constitution
+
+# 5. Commit tooling to main
+git add -A && git commit -m "add spec-kit + gstack framework"
+
+# 6. Retrofit: describe what you've already built
+#    This creates a feature branch and captures current state as spec artifacts.
+claude                    # (if not already in a session)
+/speckit.specify "Describe current system: <what it does today>"
+/speckit.plan    # Capture existing architecture decisions post-hoc
+/speckit.tasks   # Break down remaining/next work
+
+# 7. From here, use the full cycle for all new work.
+#    The spec now serves as living documentation of what exists
+#    AND the plan for what comes next.
 ```
 
 ---
@@ -159,15 +265,15 @@ Spec-Kit for definition, GStack for delivery.
 
 ### Workflow
 1. Define: /speckit.constitution → /speckit.specify → /speckit.plan → /speckit.tasks → /speckit.analyze
-2. Bridge: /speckit.gstack-handoff
-3. Challenge: /plan-ceo-review → /plan-eng-review
-4. Build per task: implement → /review → /qa → /cso (if applicable) → /ship
-5. Reflect: /retro
+2. Challenge: Point /plan-ceo-review and /plan-eng-review at spec artifacts
+3. Build per task: implement → /review → /qa → /cso (if applicable) → /ship
+4. Reflect: /retro
+5. After /ship: save review outputs to specs/<feature>/ and update spec if needed
 
 ### Artifacts
 - Specs: .specify/specs/<branch>/
 - Constitution: .specify/memory/constitution.md
-- Review files: specs/<feature>/*.md
+- Review files: specs/<feature>/*.md (product-review, engineering-review, code-review, etc.)
 
 ### GStack skills
 /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review,
@@ -175,9 +281,9 @@ Spec-Kit for definition, GStack for delivery.
 /browse, /qa, /qa-only, /design-review, /cso, /retro, /investigate,
 /document-release, /codex, /autoplan, /careful, /freeze, /guard, /unfreeze
 
-### Bridge commands
-/speckit.gstack-handoff, /speckit.gstack-review, /speckit.gstack-qa,
-/speckit.gstack-ship, /speckit.gstack-sprint
+### Handoff convention
+When running GStack review/QA skills, always provide spec context:
+"Review this against the acceptance criteria in .specify/specs/<branch>/spec.md"
 ```
 
 ---
@@ -204,13 +310,11 @@ Reference during execution to engage the right specialist:
 project-root/
 ├── .specify/
 │   ├── memory/constitution.md
-│   ├── specs/feature/NNN-name/
-│   │   ├── spec.md, plan.md, tasks.md, analyze.md
-│   ├── presets/gstack-ready/
-│   └── extensions/gstack-bridge/
+│   └── specs/feature/NNN-name/
+│       ├── spec.md, plan.md, tasks.md, analyze.md
 ├── .claude/
-│   ├── skills/gstack/           # 28 specialist skills
-│   └── commands/                # Slash commands (spec-kit + bridge)
+│   ├── skills/gstack/           # LOCAL ONLY — gitignored, each dev runs setup
+│   └── commands/                # Slash commands from spec-kit (committed)
 ├── specs/
 │   └── NNN-feature-name/       # Persistent review artifacts
 │       ├── product-review.md
@@ -220,6 +324,7 @@ project-root/
 │       ├── qa-report.md
 │       ├── release-notes.md
 │       └── retro.md
+├── .gitignore                   # Includes .claude/skills/
 ├── CLAUDE.md
 ├── src/
 └── tests/
@@ -233,9 +338,9 @@ project-root/
 
 **Review churn** — Front-load with `/plan-eng-review`. Lock architecture before coding. Most churn = undecided design, not bugs.
 
-**GStack can't find design doc** — Run `/speckit.gstack-handoff` first. Confirm `~/.gstack/projects/<name>.md` exists.
+**GStack reviews lack context** — Always tell GStack where the spec is: "Review against .specify/specs/<branch>/spec.md". Put this in your CLAUDE.md so the agent does it automatically.
 
-**Preset not applying** — Check resolution: `specify preset resolve spec-template`. Re-run template generation for existing specs if preset was installed after `specify init`.
+**WSL Chromium issues** — GStack's `/qa` and `/browse` need Playwright Chromium. If setup fails, install system deps: `sudo apt install -y libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libpango-1.0-0 libcairo2 libasound2t64 libxshmfence1`
 
 ---
 
