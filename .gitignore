@@ -21,6 +21,10 @@ Thumbs.db
 dist/
 build/
 out/
+.next/
+
+# SQLite data
+data/
 
 # Logs
 *.log

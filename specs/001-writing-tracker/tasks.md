@@ -19,11 +19,11 @@
 
 **Purpose**: Project scaffold, tooling, Tailwind config
 
-- [ ] T001 Initialize Next.js 14+ project with App Router, TypeScript strict mode, and Tailwind CSS in project root
-- [ ] T002 Install `better-sqlite3` and `@types/better-sqlite3` as dependencies
-- [ ] T003 [P] Create `data/` directory and add `data/` to `.gitignore`
-- [ ] T004 [P] Configure custom Tailwind palette (paper, ink, ink-light, accent, accent-light) in `tailwind.config.ts`
-- [ ] T005 [P] Create empty directory structure: `lib/`, `components/`, `actions/`
+- [x] T001 Initialize Next.js 14+ project with App Router, TypeScript strict mode, and Tailwind CSS in project root
+- [x] T002 Install `better-sqlite3` and `@types/better-sqlite3` as dependencies
+- [x] T003 [P] Create `data/` directory and add `data/` to `.gitignore`
+- [x] T004 [P] Configure custom Tailwind palette (paper, ink, ink-light, accent, accent-light) in `tailwind.config.ts`
+- [x] T005 [P] Create empty directory structure: `lib/`, `components/`, `actions/`
 
 ---
 
@@ -33,14 +33,14 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Implement SQLite singleton connection with globalThis pattern and table creation (user_state, week_logs, skill_ratings) in `lib/db.ts`
-- [ ] T007 Implement all read queries (getUserState, getWeekLog, getAllWeekLogs, getSkillRatings) in `lib/queries.ts`
-- [ ] T008 Implement all write mutations (toggleDay, saveNotes, setCurrentPhase, updateCurrentWeek, updateLastTab, setSkillRating) with input validation (rating 0–5, week_number 1–52, days array contains only integers 0–6, last_tab is valid slug) in `lib/mutations.ts`
-- [ ] T009 [P] Create static program content (4 phases with exercises, prompts, skill tags, reading list) from PRD §7–9 in `lib/program-content.ts`
-- [ ] T010 Create root layout with HTML structure, font config, and TabNav component in `app/layout.tsx`
-- [ ] T011 [P] Create TabNav component with 4 tab links (Plan, This Week, Skills, Log) and active-tab highlighting in `components/tab-nav.tsx`
-- [ ] T012 Create root page that redirects to last_tab (or /plan on first visit) in `app/page.tsx`
-- [ ] T013 [P] Create updateLastTab Server Action in `actions/tab-actions.ts`
+- [x] T006 Implement SQLite singleton connection with globalThis pattern and table creation (user_state, week_logs, skill_ratings) in `lib/db.ts`
+- [x] T007 Implement all read queries (getUserState, getWeekLog, getAllWeekLogs, getSkillRatings) in `lib/queries.ts`
+- [x] T008 Implement all write mutations (toggleDay, saveNotes, setCurrentPhase, updateCurrentWeek, updateLastTab, setSkillRating) with input validation (rating 0–5, week_number 1–52, days array contains only integers 0–6, last_tab is valid slug) in `lib/mutations.ts`
+- [x] T009 [P] Create static program content (4 phases with exercises, prompts, skill tags, reading list) from PRD §7–9 in `lib/program-content.ts`
+- [x] T010 Create root layout with HTML structure, font config, and TabNav component in `app/layout.tsx`
+- [x] T011 [P] Create TabNav component with 4 tab links (Plan, This Week, Skills, Log) and active-tab highlighting in `components/tab-nav.tsx`
+- [x] T012 Create root page that redirects to last_tab (or /plan on first visit) in `app/page.tsx`
+- [x] T013 [P] Create updateLastTab Server Action in `actions/tab-actions.ts`
 
 **Checkpoint**: Foundation ready — root layout renders, DB initializes, all queries/mutations available, tab navigation works
 
@@ -54,10 +54,10 @@
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Create This Week page (server component) that fetches current week data and renders day tracker, progress message in `app/this-week/page.tsx`
-- [ ] T015 [US1] Create DayTracker client component with 7 toggle buttons (Mon–Sun) that calls toggleDay action in `components/day-tracker.tsx`
-- [ ] T016 [US1] Create ProgressMessage component that displays "great week" / "keep going" / "get writing" based on days count in `components/progress-message.tsx`
-- [ ] T017 [US1] Implement toggleDay and navigateWeek Server Actions in `actions/week-actions.ts`
+- [x] T014 [US1] Create This Week page (server component) that fetches current week data and renders day tracker, progress message in `app/this-week/page.tsx`
+- [x] T015 [US1] Create DayTracker client component with 7 toggle buttons (Mon–Sun) that calls toggleDay action in `components/day-tracker.tsx`
+- [x] T016 [US1] Create ProgressMessage component that displays "great week" / "keep going" / "get writing" based on days count in `components/progress-message.tsx`
+- [x] T017 [US1] Implement toggleDay and navigateWeek Server Actions in `actions/week-actions.ts`
 
 **Checkpoint**: User can log daily writing activity on the This Week tab. Days persist across page refresh. Progress message updates immediately.
 
@@ -71,10 +71,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T018 [US2] Add exercise display section to This Week page showing the auto-selected exercise from current phase in `app/this-week/page.tsx`
-- [ ] T019 [US2] Create NotesField client component with auto-save (on blur / debounced) that calls saveNotes action in `components/notes-field.tsx`
-- [ ] T020 [US2] Add friend session prompt display (static, from current phase) to This Week page in `app/this-week/page.tsx`
-- [ ] T021 [US2] Implement saveNotes Server Action in `actions/week-actions.ts`
+- [x] T018 [US2] Add exercise display section to This Week page showing the auto-selected exercise from current phase in `app/this-week/page.tsx`
+- [x] T019 [US2] Create NotesField client component with auto-save (on blur / debounced) that calls saveNotes action in `components/notes-field.tsx`
+- [x] T020 [US2] Add friend session prompt display (static, from current phase) to This Week page in `app/this-week/page.tsx`
+- [x] T021 [US2] Implement saveNotes Server Action in `actions/week-actions.ts`
 
 **Checkpoint**: This Week view shows correct exercise, accepts and persists notes, displays friend prompt. Exercise cycles correctly through 8 per phase.
 
@@ -88,11 +88,11 @@
 
 ### Implementation for User Story 3
 
-- [ ] T022 [US3] Create Plan page (server component) that fetches current phase and renders 4 phase cards in `app/plan/page.tsx`
-- [ ] T023 [US3] Create PhaseCard client component with expand/collapse, current-phase highlighting, and set-phase-on-tap in `components/phase-card.tsx`
-- [ ] T024 [US3] Implement setCurrentPhase Server Action in `actions/phase-actions.ts`
-- [ ] T025 [US3] Create WeekNavigator client component with back/forward arrows and week number display in `components/week-navigator.tsx`
-- [ ] T026 [US3] Integrate WeekNavigator into This Week page with week boundary enforcement (1–52) in `app/this-week/page.tsx`
+- [x] T022 [US3] Create Plan page (server component) that fetches current phase and renders 4 phase cards in `app/plan/page.tsx`
+- [x] T023 [US3] Create PhaseCard client component with expand/collapse, current-phase highlighting, and set-phase-on-tap in `components/phase-card.tsx`
+- [x] T024 [US3] Implement setCurrentPhase Server Action in `actions/phase-actions.ts`
+- [x] T025 [US3] Create WeekNavigator client component with back/forward arrows and week number display in `components/week-navigator.tsx`
+- [x] T026 [US3] Integrate WeekNavigator into This Week page with week boundary enforcement (1–52) in `app/this-week/page.tsx`
 
 **Checkpoint**: Plan view shows all 4 phases with expand/collapse. Changing phase updates This Week exercises. Week navigation works within 1–52 range.
 
@@ -106,9 +106,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T027 [US4] Create Skills page (server component) that fetches skill ratings and renders skill rows + reading list in `app/skills/page.tsx`
-- [ ] T028 [US4] Create SkillRow client component with 5 clickable pips, rating labels, and toggle-to-clear behavior in `components/skill-row.tsx`
-- [ ] T029 [US4] Implement updateSkillRating Server Action in `actions/skill-actions.ts`
+- [x] T027 [US4] Create Skills page (server component) that fetches skill ratings and renders skill rows + reading list in `app/skills/page.tsx`
+- [x] T028 [US4] Create SkillRow client component with 5 clickable pips, rating labels, and toggle-to-clear behavior in `components/skill-row.tsx`
+- [x] T029 [US4] Implement updateSkillRating Server Action in `actions/skill-actions.ts`
 
 **Checkpoint**: Skills view shows 6 skills with interactive pips, correct labels, and 5 books. Ratings persist across sessions.
 
@@ -122,11 +122,11 @@
 
 ### Implementation for User Story 5
 
-- [ ] T030 [US5] Create Log page (server component) that fetches all week logs, computes stats, and renders grid + stats + recent notes in `app/log/page.tsx`
-- [ ] T031 [US5] Create WeekGrid component rendering 52 cells (13×4) with heatmap shading and current-week outline in `components/week-grid.tsx`
-- [ ] T032 [US5] Add cell-click navigation (Link to `/this-week?week=N`) to WeekGrid in `components/week-grid.tsx`
-- [ ] T033 [US5] Add summary stats section (Weeks Active, Total Days Written, Current Phase, Current Week) to Log page in `app/log/page.tsx`
-- [ ] T034 [US5] Add recent notes section (last 5 weeks with notes, truncated previews) to Log page in `app/log/page.tsx`
+- [x] T030 [US5] Create Log page (server component) that fetches all week logs, computes stats, and renders grid + stats + recent notes in `app/log/page.tsx`
+- [x] T031 [US5] Create WeekGrid component rendering 52 cells (13×4) with heatmap shading and current-week outline in `components/week-grid.tsx`
+- [x] T032 [US5] Add cell-click navigation (Link to `/this-week?week=N`) to WeekGrid in `components/week-grid.tsx`
+- [x] T033 [US5] Add summary stats section (Weeks Active, Total Days Written, Current Phase, Current Week) to Log page in `app/log/page.tsx`
+- [x] T034 [US5] Add recent notes section (last 5 weeks with notes, truncated previews) to Log page in `app/log/page.tsx`
 
 **Checkpoint**: Log view shows accurate 52-week heatmap, correct shading, working cell navigation, and up-to-date summary stats.
 
@@ -140,9 +140,9 @@
 
 ### Implementation for User Story 6
 
-- [ ] T035 [US6] Add active-tab tracking: call updateLastTab action on every tab switch in `components/tab-nav.tsx`
-- [ ] T036 [US6] Support `?week=N` query parameter in This Week page for direct week navigation from Log grid in `app/this-week/page.tsx`
-- [ ] T037 [US6] Handle historical week display: when viewing a past week, derive the phase from weekRange (not user's current phase) so exercises match the week's phase in `app/this-week/page.tsx`
+- [x] T035 [US6] Add active-tab tracking: call updateLastTab action on every tab switch in `components/tab-nav.tsx`
+- [x] T036 [US6] Support `?week=N` query parameter in This Week page for direct week navigation from Log grid in `app/this-week/page.tsx`
+- [x] T037 [US6] Handle historical week display: when viewing a past week, derive the phase from weekRange (not user's current phase) so exercises match the week's phase in `app/this-week/page.tsx`
 
 **Checkpoint**: Full navigation loop works — all tabs remember state, week navigation is seamless, no data loss on any transition.
 
