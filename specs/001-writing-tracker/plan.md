@@ -131,3 +131,15 @@ Per `plan-promt.md` §"What to Build First":
 | Static content in TS | PRD §7–9 content is immutable. A database table adds complexity with no benefit. |
 | Client components only at leaf | Constitution VII: server-render by default. Only interactive bits (toggles, pips, textarea) are client. |
 | No optimistic UI in v1 | SQLite is local → mutations complete in < 50ms. No perceived latency to mask. |
+| Notes auto-save | Debounce (1s after typing stops) + save on blur as fallback. Prevents data loss on tab close. |
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAN | mode: HOLD_SCOPE, 0 critical gaps |
+| Codex Review | `/codex review` | Independent 2nd opinion | 0 | — | — |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | CLEAN | 0 issues, 0 critical gaps |
+| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
+
+**VERDICT:** CEO + ENG CLEARED — ready to implement.
