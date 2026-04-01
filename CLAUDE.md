@@ -84,3 +84,10 @@ Static: 4 phases × 8 exercises each + 4 mentor prompts + 5 books
 - Load & interactive: <3s on mobile
 - Day log interaction: <2s
 - Fast paths render without spinners
+
+## Active Technologies
+- TypeScript (strict mode), Node ≥ 22 + `better-sqlite3`, Tailwind CSS (001-writing-tracker)
+- SQLite (single file at `data/writing-tracker.db`, persistent disk on deploy) (001-writing-tracker)
+
+## Recent Changes
+- 001-writing-tracker: Added TypeScript (strict mode), Node ≥ 22 + `better-sqlite3`, Tailwind CSS

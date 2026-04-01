@@ -115,7 +115,7 @@ The user moves freely between the 4 tabs (Plan, This Week, Skills, Log) using a 
 
 - What happens when the user navigates to Week 53 or Week 0? The app should prevent navigation beyond the 1–52 range.
 - What happens when the user is in Phase 2 but navigates back to a Phase 1 week? The exercise shown should correspond to the week's phase, not the user's current phase.
-- What happens when browser local storage is full or unavailable? The app should display a warning that data may not be saved.
+- What happens when the SQLite database is inaccessible or corrupt? The app should display an error page indicating data cannot be loaded.
 - What happens when the user has no days logged for any week? The heatmap grid should show all cells as empty/dark with no errors.
 - What happens on a very narrow mobile screen (< 320px)? The 52-cell grid should remain readable, potentially scrollable.
 - What happens when the user changes their current phase backward (e.g., from Phase 3 to Phase 1)? The app should allow this without losing any data from later phases.
@@ -172,7 +172,7 @@ The user moves freely between the 4 tabs (Plan, This Week, Skills, Log) using a 
 ## Assumptions
 
 - The app is used by a single user — no authentication, accounts, or multi-user support is needed
-- Data will be persisted using browser local storage (or equivalent client-side persistence); cloud sync may be added later but is not required for v1
+- Data will be persisted server-side using SQLite via `better-sqlite3` (single file on persistent disk); cloud sync may be added later but is not required for v1
 - The user has a modern browser (Chrome, Safari, Firefox, Edge — latest 2 versions) with JavaScript enabled
 - The 52-week program content (exercises, prompts, reading list) is static and baked into the app — no CMS or admin interface
 - The user manually advances their phase — there is no automatic phase transition based on week number
