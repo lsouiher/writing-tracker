@@ -100,22 +100,22 @@
 
 ### Implementation for User Story 2
 
-- [ ] T046 Create Supabase migration for `subscriptions` and `coupons` tables with all columns, indexes, state transitions, and unique constraints in `src/supabase/migrations/006_subscriptions.sql`
-- [ ] T047 Create RLS policies for `subscriptions` (own row read, server-only write) and `coupons` (server-only) in `src/supabase/migrations/007_rls_subscriptions.sql`
-- [ ] T048 [P] [US2] Implement PPP pricing logic in `src/lib/stripe/pricing.ts`: country-to-price-region mapping, Stripe Price ID lookup by region and plan (monthly/annual)
-- [ ] T049 [P] [US2] Implement Stripe client initialization in `src/lib/stripe/client.ts` with server-only secret key
-- [ ] T050 [P] [US2] Implement subscription data access in `src/lib/supabase/queries/subscriptions.ts`: `getActiveSubscription(userId)`, `upsertSubscription(data)`, `getUserTier(userId)`
-- [ ] T051 [US2] Implement `POST /api/stripe/checkout` Route Handler in `src/app/api/stripe/checkout/route.ts` creating Checkout session with PPP pricing, trial period, and optional coupon
-- [ ] T052 [US2] Implement `POST /api/stripe/portal` Route Handler in `src/app/api/stripe/portal/route.ts` creating Customer Portal session for subscription management
-- [ ] T053 [US2] Implement Stripe webhook handler in `src/app/api/webhooks/stripe/route.ts` with signature verification, handling all 6 events per contracts/webhook-contracts.md (checkout.session.completed, subscription.created/updated/deleted, invoice.payment_failed, invoice.paid)
-- [ ] T054 [US2] Implement subscription state sync logic in `src/lib/stripe/webhooks.ts`: process each webhook event type, update subscriptions table, trigger email notifications
-- [ ] T055 [P] [US2] Create PaywallPrompt component in `src/components/ui/paywall-prompt.tsx` shown when free users access locked features (labs, quizzes, certificates, AI tutor)
+- [x] T046 Create Supabase migration for `subscriptions` and `coupons` tables with all columns, indexes, state transitions, and unique constraints in `src/supabase/migrations/006_subscriptions.sql`
+- [x] T047 Create RLS policies for `subscriptions` (own row read, server-only write) and `coupons` (server-only) in `src/supabase/migrations/007_rls_subscriptions.sql`
+- [x] T048 [P] [US2] Implement PPP pricing logic in `src/lib/stripe/pricing.ts`: country-to-price-region mapping, Stripe Price ID lookup by region and plan (monthly/annual)
+- [x] T049 [P] [US2] Implement Stripe client initialization in `src/lib/stripe/client.ts` with server-only secret key
+- [x] T050 [P] [US2] Implement subscription data access in `src/lib/supabase/queries/subscriptions.ts`: `getActiveSubscription(userId)`, `upsertSubscription(data)`, `getUserTier(userId)`
+- [x] T051 [US2] Implement `POST /api/stripe/checkout` Route Handler in `src/app/api/stripe/checkout/route.ts` creating Checkout session with PPP pricing, trial period, and optional coupon
+- [x] T052 [US2] Implement `POST /api/stripe/portal` Route Handler in `src/app/api/stripe/portal/route.ts` creating Customer Portal session for subscription management
+- [x] T053 [US2] Implement Stripe webhook handler in `src/app/api/webhooks/stripe/route.ts` with signature verification, handling all 6 events per contracts/webhook-contracts.md (checkout.session.completed, subscription.created/updated/deleted, invoice.payment_failed, invoice.paid)
+- [x] T054 [US2] Implement subscription state sync logic in `src/lib/stripe/webhooks.ts`: process each webhook event type, update subscriptions table, trigger email notifications
+- [x] T055 [P] [US2] Create PaywallPrompt component in `src/components/ui/paywall-prompt.tsx` shown when free users access locked features (labs, quizzes, certificates, AI tutor)
 - [ ] T056 [P] [US2] Create email templates in `src/lib/email/templates/`: welcome.tsx, trial-started.tsx, trial-ending.tsx (day 5), payment-failed.tsx, payment-success.tsx, subscription-canceled.tsx
-- [ ] T057 [P] [US2] Implement email sending functions in `src/lib/email/send.ts` using Resend SDK with French-first templates
-- [ ] T058 [US2] Build pricing page in `src/app/(marketing)/pricing/page.tsx` showing Free vs Pro comparison, PPP-adjusted prices detected via Vercel Edge geolocation, monthly/annual toggle
-- [ ] T059 [US2] Add geolocation-based country detection in `src/middleware.ts` using Vercel Edge `request.geo` and pass country via cookie/header
-- [ ] T060 [US2] Integrate paywall prompts into lesson page (`src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx`) for non-preview lessons when user is free tier
-- [ ] T061 [US2] Add subscription status display to dashboard in `src/app/(platform)/dashboard/page.tsx` showing plan, trial countdown, billing portal link
+- [x] T057 [P] [US2] Implement email sending functions in `src/lib/email/send.ts` using Resend SDK with French-first templates
+- [x] T058 [US2] Build pricing page in `src/app/(marketing)/pricing/page.tsx` showing Free vs Pro comparison, PPP-adjusted prices detected via Vercel Edge geolocation, monthly/annual toggle
+- [x] T059 [US2] Add geolocation-based country detection in `src/middleware.ts` using Vercel Edge `request.geo` and pass country via cookie/header
+- [x] T060 [US2] Integrate paywall prompts into lesson page (`src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx`) for non-preview lessons when user is free tier
+- [x] T061 [US2] Add subscription status display to dashboard in `src/app/(platform)/dashboard/page.tsx` showing plan, trial countdown, billing portal link
 
 **Checkpoint**: Free-to-Pro conversion funnel is complete. Users can start trials, get auto-converted, manage subscriptions, and see PPP pricing.
 
