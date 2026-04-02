@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd)",
+      "Bash(ls /mnt/c/Users/leoso/OneDrive/Desktop/Projects/writing-tracker/.claude/skills/gstack/*.md)",
+      "Bash(ls:*)"
+    ]
+  }
+}
