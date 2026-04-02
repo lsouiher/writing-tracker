@@ -234,18 +234,18 @@
 
 **Goal**: Platform admin can manage content, users, revenue, moderation queue, and AI tutor logs.
 
-- [ ] T111 Build admin layout with navigation in `src/app/(admin)/layout.tsx` with role='admin' server-side check
-- [ ] T112 [P] Implement `GET /api/admin/dashboard` Route Handler in `src/app/api/admin/dashboard/route.ts` aggregating revenue, user counts, AI tutor usage, moderation queue count
-- [ ] T113 [P] Implement `GET /api/admin/moderation` and `POST /api/admin/moderation/[flagId]` Route Handlers in `src/app/api/admin/moderation/route.ts` and `src/app/api/admin/moderation/[flagId]/route.ts`
-- [ ] T114 [P] Implement `POST /api/admin/coupons` Route Handler in `src/app/api/admin/coupons/route.ts` for creating coupon codes with discount percentage and usage limits
-- [ ] T115 Build admin dashboard page in `src/app/(admin)/page.tsx` with revenue chart, user stats, quick actions
-- [ ] T116 Build admin moderation queue page in `src/app/(admin)/moderation/page.tsx` with flagged posts list, approve/remove actions
-- [ ] T117 Build admin coupon management page in `src/app/(admin)/coupons/page.tsx` with create form and usage tracking
-- [ ] T118 Build admin AI tutor logs page in `src/app/(admin)/ai-logs/page.tsx` for reviewing Q&A quality and off-topic detection
-- [ ] T146 [P] Implement admin course CRUD Route Handlers in `src/app/api/admin/courses/route.ts` and `src/app/api/admin/courses/[courseId]/route.ts` for creating, updating, and managing courses/modules/lessons
-- [ ] T147 Build admin content management page in `src/app/(admin)/content/page.tsx` with course list, create/edit forms for courses, modules, and lessons
-- [ ] T148 [P] Implement admin user management Route Handlers in `src/app/api/admin/users/route.ts` for listing users with filters (tier, role, country) and `src/app/api/admin/users/[userId]/route.ts` for viewing/editing user details and role changes
-- [ ] T149 Build admin user management page in `src/app/(admin)/users/page.tsx` with user list, search/filter, role editing, and subscription status overview
+- [x] T111 Build admin layout with navigation in `src/app/(admin)/layout.tsx` with role='admin' server-side check
+- [x] T112 [P] Implement `GET /api/admin/dashboard` Route Handler in `src/app/api/admin/dashboard/route.ts` aggregating revenue, user counts, AI tutor usage, moderation queue count
+- [x] T113 [P] Implement `GET /api/admin/moderation` and `POST /api/admin/moderation/[flagId]` Route Handlers in `src/app/api/admin/moderation/route.ts` and `src/app/api/admin/moderation/[flagId]/route.ts`
+- [x] T114 [P] Implement `POST /api/admin/coupons` Route Handler in `src/app/api/admin/coupons/route.ts` for creating coupon codes with discount percentage and usage limits
+- [x] T115 Build admin dashboard page in `src/app/(admin)/page.tsx` with revenue chart, user stats, quick actions
+- [x] T116 Build admin moderation queue page in `src/app/(admin)/moderation/page.tsx` with flagged posts list, approve/remove actions
+- [x] T117 Build admin coupon management page in `src/app/(admin)/coupons/page.tsx` with create form and usage tracking
+- [x] T118 Build admin AI tutor logs page in `src/app/(admin)/ai-logs/page.tsx` for reviewing Q&A quality and off-topic detection
+- [x] T146 [P] Implement admin course CRUD Route Handlers in `src/app/api/admin/courses/route.ts` and `src/app/api/admin/courses/[courseId]/route.ts` for creating, updating, and managing courses/modules/lessons
+- [x] T147 Build admin content management page in `src/app/(admin)/content/page.tsx` with course list, create/edit forms for courses, modules, and lessons
+- [x] T148 [P] Implement admin user management Route Handlers in `src/app/api/admin/users/route.ts` for listing users with filters (tier, role, country) and `src/app/api/admin/users/[userId]/route.ts` for viewing/editing user details and role changes
+- [x] T149 Build admin user management page in `src/app/(admin)/users/page.tsx` with user list, search/filter, role editing, and subscription status overview
 
 **Checkpoint**: Admin panel provides full platform management capabilities including content and user management.
 
