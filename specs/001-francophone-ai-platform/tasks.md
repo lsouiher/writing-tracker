@@ -19,15 +19,15 @@
 
 **Purpose**: Project initialization, dependency installation, and baseline configuration
 
-- [ ] T001 Initialize Next.js 14+ project with TypeScript, Tailwind, App Router, and src/ directory using `create-next-app`
-- [ ] T002 Install all runtime dependencies: @supabase/supabase-js, @supabase/ssr, stripe, @stripe/stripe-js, @anthropic-ai/sdk, resend, @react-email/components, @upstash/redis, @upstash/ratelimit, @monaco-editor/react, @react-pdf/renderer, nanoid, posthog-js, posthog-node
-- [ ] T003 Install dev dependencies: vitest, @testing-library/react, playwright, supabase CLI
-- [ ] T004 [P] Create `.env.local.example` with all environment variable placeholders per `specs/001-francophone-ai-platform/quickstart.md`
-- [ ] T005 [P] Configure Vitest in `vitest.config.ts` with path aliases and TypeScript support
-- [ ] T006 [P] Configure Playwright in `playwright.config.ts` for E2E critical paths
-- [ ] T007 Create base app layout with French-first metadata and font configuration in `src/app/layout.tsx`
-- [ ] T008 [P] Create shared TypeScript domain types in `src/types/domain.ts` (SubscriptionTier, UserRole, CourseLevel, SubscriptionStatus enums)
-- [ ] T009 [P] Create Stripe-specific types in `src/types/stripe.ts` (PriceRegion, CheckoutParams, WebhookEvent types)
+- [x] T001 Initialize Next.js 14+ project with TypeScript, Tailwind, App Router, and src/ directory using `create-next-app`
+- [x] T002 Install all runtime dependencies: @supabase/supabase-js, @supabase/ssr, stripe, @stripe/stripe-js, @anthropic-ai/sdk, resend, @react-email/components, @upstash/redis, @upstash/ratelimit, @monaco-editor/react, @react-pdf/renderer, nanoid, posthog-js, posthog-node
+- [x] T003 Install dev dependencies: vitest, @testing-library/react, playwright, supabase CLI
+- [x] T004 [P] Create `.env.local.example` with all environment variable placeholders per `specs/001-francophone-ai-platform/quickstart.md`
+- [x] T005 [P] Configure Vitest in `vitest.config.ts` with path aliases and TypeScript support
+- [x] T006 [P] Configure Playwright in `playwright.config.ts` for E2E critical paths
+- [x] T007 Create base app layout with French-first metadata and font configuration in `src/app/layout.tsx`
+- [x] T008 [P] Create shared TypeScript domain types in `src/types/domain.ts` (SubscriptionTier, UserRole, CourseLevel, SubscriptionStatus enums)
+- [x] T009 [P] Create Stripe-specific types in `src/types/stripe.ts` (PriceRegion, CheckoutParams, WebhookEvent types)
 
 ---
 
@@ -37,20 +37,20 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T010 Initialize Supabase project with `npx supabase init` and configure `supabase/config.toml`
-- [ ] T011 Create Supabase migration for `users` table with all columns, indexes, and soft delete per `data-model.md` in `src/supabase/migrations/001_users.sql`
-- [ ] T012 Create Supabase migration for `courses`, `modules`, `lessons` tables with all columns, indexes, and relationships in `src/supabase/migrations/002_content.sql`
-- [ ] T013 Create RLS policies for `users` (own row read/write), `courses`/`modules`/`lessons` (public read, admin write) in `src/supabase/migrations/003_rls_base.sql`
-- [ ] T013b Implement Supabase `subscription_status(user_uuid)` SQL function returning 'free' or 'pro' by querying subscriptions table, in `src/supabase/migrations/003b_subscription_fn.sql` — required by all Pro-gated RLS policies in later phases
-- [ ] T014 [P] Implement Supabase server client factory in `src/lib/supabase/server.ts` using @supabase/ssr with cookie handling
-- [ ] T015 [P] Implement Supabase browser client factory in `src/lib/supabase/client.ts`
-- [ ] T016 Implement auth middleware in `src/middleware.ts` that refreshes Supabase session on every request and protects `/dashboard`, `/admin` routes
+- [x] T010 Initialize Supabase project with `npx supabase init` and configure `supabase/config.toml`
+- [x] T011 Create Supabase migration for `users` table with all columns, indexes, and soft delete per `data-model.md` in `src/supabase/migrations/001_users.sql`
+- [x] T012 Create Supabase migration for `courses`, `modules`, `lessons` tables with all columns, indexes, and relationships in `src/supabase/migrations/002_content.sql`
+- [x] T013 Create RLS policies for `users` (own row read/write), `courses`/`modules`/`lessons` (public read, admin write) in `src/supabase/migrations/003_rls_base.sql`
+- [x] T013b Implement Supabase `subscription_status(user_uuid)` SQL function returning 'free' or 'pro' by querying subscriptions table, in `src/supabase/migrations/003b_subscription_fn.sql` — required by all Pro-gated RLS policies in later phases
+- [x] T014 [P] Implement Supabase server client factory in `src/lib/supabase/server.ts` using @supabase/ssr with cookie handling
+- [x] T015 [P] Implement Supabase browser client factory in `src/lib/supabase/client.ts`
+- [x] T016 Implement auth middleware in `src/middleware.ts` that refreshes Supabase session on every request and protects `/dashboard`, `/admin` routes
 - [ ] T017 [P] Generate Supabase TypeScript types and save to `src/types/database.ts` using `npx supabase gen types`
-- [ ] T018 [P] Implement consistent API response helpers (`successResponse`, `errorResponse`) in `src/lib/api/response.ts` per contracts/api-routes.md response shape
-- [ ] T019 [P] Create shared UI primitives: Button, Card, Badge, Input, Modal components in `src/components/ui/`
-- [ ] T020 Create seed data script with sample courses, modules, and lessons in `src/supabase/seed.sql`
-- [ ] T021 [P] Implement PostHog provider wrapper in `src/components/providers/posthog-provider.tsx` with cookie-less tracking mode
-- [ ] T022 [P] Create `src/lib/supabase/queries/users.ts` with `getUserProfile()`, `updateUserProfile()` data access functions (note: `getUserTier()` lives in `queries/subscriptions.ts` — see T050)
+- [x] T018 [P] Implement consistent API response helpers (`successResponse`, `errorResponse`) in `src/lib/api/response.ts` per contracts/api-routes.md response shape
+- [x] T019 [P] Create shared UI primitives: Button, Card, Badge, Input, Modal components in `src/components/ui/`
+- [x] T020 Create seed data script with sample courses, modules, and lessons in `src/supabase/seed.sql`
+- [x] T021 [P] Implement PostHog provider wrapper in `src/components/providers/posthog-provider.tsx` with cookie-less tracking mode
+- [x] T022 [P] Create `src/lib/supabase/queries/users.ts` with `getUserProfile()`, `updateUserProfile()` data access functions (note: `getUserTier()` lives in `queries/subscriptions.ts` — see T050)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin
 
