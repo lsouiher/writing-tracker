@@ -26,6 +26,13 @@ TypeScript 5.x, Node.js 20 LTS: Follow standard conventions
 - 001-francophone-ai-platform: Added TypeScript 5.x, Node.js 20 LTS + Supabase (auth + Postgres + storage + realtime + RLS), Stripe (@stripe/stripe-js + stripe), Bunny.net Stream (video CDN), Claude API (@anthropic-ai/sdk), Resend + React Email, PostHog, Upstash Redis (@upstash/redis), Monaco Editor (@monaco-editor/react), Judge0 API
 
 <!-- MANUAL ADDITIONS START -->
+
+## Design System
+Always read DESIGN.md before making any visual or UI decisions.
+All font choices, colors, spacing, and aesthetic direction are defined there.
+Do not deviate without explicit user approval.
+In QA mode, flag any code that doesn't match DESIGN.md.
+
 <!-- MANUAL ADDITIONS END -->
 
 ## Skill routing

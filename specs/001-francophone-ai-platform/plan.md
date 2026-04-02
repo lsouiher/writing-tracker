@@ -140,3 +140,18 @@ src/
 ## Complexity Tracking
 
 > No constitution violations detected. No complexity justifications needed.
+
+## GSTACK REVIEW REPORT
+
+| Review | Trigger | Why | Runs | Status | Findings |
+|--------|---------|-----|------|--------|----------|
+| CEO Review | `/plan-ceo-review` | Scope & strategy | 1 | CLEAR | 6 proposals, 6 accepted, 3 deferred. Mode: SCOPE_EXPANSION |
+| Codex Review | `/codex review` | Independent 2nd opinion | 0 | — | — |
+| Eng Review | `/plan-eng-review` | Architecture & tests (required) | 1 | CLEAR (PLAN) | 4 issues, 0 critical gaps. JSONB validation, shared Claude client, tests co-requirement, eager loading. |
+| Design Review | `/plan-design-review` | UI/UX gaps | 0 | — | — |
+
+- **UNRESOLVED:** 0 decisions pending
+- **SCOPE ACCEPTED:** AI personalized paths, living skill profiles, demand validation hooks, lesson summaries, streak counter, simplify button
+- **SCOPE DEFERRED:** Community forums, B2B team licenses, referral program
+- **ENG ADDITIONS:** JSONB validation + fallback on AI responses, shared Claude client wrapper (`lib/ai/claude-client.ts`), tests as co-requirement + 5 E2E tasks, eager loading on dashboard queries
+- **VERDICT:** CEO + ENG CLEARED. Ready to implement.
