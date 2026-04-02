@@ -64,29 +64,29 @@
 
 ### Implementation for User Story 1
 
-- [ ] T023 Create Supabase migration for `enrollments` and `progress` tables with all columns, indexes, and unique constraints in `src/supabase/migrations/004_enrollments_progress.sql`
-- [ ] T024 Create RLS policies for `enrollments` (own rows, authenticated insert) and `progress` (own rows, authenticated upsert) in `src/supabase/migrations/005_rls_progress.sql`
-- [ ] T025 [P] [US1] Implement course data access functions in `src/lib/supabase/queries/courses.ts`: `getPublishedCourses(level?)`, `getCourseBySlug(slug)`, `getCourseWithModules(slug)`
-- [ ] T026 [P] [US1] Implement progress data access functions in `src/lib/supabase/queries/progress.ts`: `getUserProgress(userId, courseId)`, `upsertLessonProgress(userId, lessonId, position, completed)`, `getEnrollments(userId)`
-- [ ] T027 [P] [US1] Implement Bunny.net signed URL generation in `src/lib/bunny/signed-urls.ts` with HMAC-SHA256 and 4-hour expiry
-- [ ] T028 [US1] Implement `GET /api/courses` Route Handler in `src/app/api/courses/route.ts` with level filter and pagination per contracts/api-routes.md
-- [ ] T029 [US1] Implement `GET /api/courses/[slug]` Route Handler in `src/app/api/courses/[slug]/route.ts` returning course with modules and lessons
-- [ ] T030 [US1] Implement `GET /api/lessons/[slug]/video` Route Handler in `src/app/api/lessons/[slug]/video/route.ts` with signed URL generation and free preview check
-- [ ] T031 [US1] Implement `POST /api/progress` Route Handler in `src/app/api/progress/route.ts` for lesson position and completion updates
-- [ ] T032 [US1] Implement `POST /api/enrollments` Route Handler in `src/app/api/enrollments/route.ts` for course enrollment
-- [ ] T033 [P] [US1] Create CourseCard component in `src/components/course/course-card.tsx` displaying title, level badge, duration, thumbnail
-- [ ] T034 [P] [US1] Create CourseProgressBar component in `src/components/course/progress-bar.tsx` showing module and overall completion
-- [ ] T035 [US1] Build course catalog page (Server Component) in `src/app/(marketing)/courses/page.tsx` with level filter tabs and course grid
-- [ ] T036 [US1] Build course detail page in `src/app/(platform)/courses/[courseSlug]/page.tsx` showing modules, lessons, and enrollment button
-- [ ] T037 [P] [US1] Create VideoPlayer client component in `src/components/video/video-player.tsx` with Bunny.net iframe embed, chapter navigation, playback speed (0.5x-2x), quality selection
-- [ ] T038 [P] [US1] Create TranscriptViewer client component in `src/components/video/transcript-viewer.tsx` with synchronized French transcript and click-to-seek
-- [ ] T039 [US1] Build lesson page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx` with video player, transcript sidebar, auto-resume from last position, and progress tracking on completion
-- [ ] T040 [US1] Build auth pages: login in `src/app/(auth)/login/page.tsx`, register in `src/app/(auth)/register/page.tsx`, and password reset in `src/app/(auth)/reset-password/page.tsx` with email + Google OAuth, French-first UI
-- [ ] T041 [US1] Build user dashboard page in `src/app/(platform)/dashboard/page.tsx` showing enrolled courses, per-lesson completion, module progress bars, overall percentage
-- [ ] T042 [US1] Implement `GET /api/dashboard` Route Handler in `src/app/api/dashboard/route.ts` aggregating enrollments, progress, and subscription status
-- [ ] T043 [US1] Build landing page in `src/app/(marketing)/page.tsx` with hero section, featured courses, value proposition in French
-- [ ] T044 [US1] Implement French SEO meta tags, Open Graph tags, and Course structured data (JSON-LD) in `src/app/(marketing)/courses/page.tsx` and `src/app/(marketing)/page.tsx` per FR-024
-- [ ] T045 [US1] Add French/English subtitle track support (WebVTT) to VideoPlayer component in `src/components/video/video-player.tsx` per FR-026
+- [x] T023 Create Supabase migration for `enrollments` and `progress` tables with all columns, indexes, and unique constraints in `src/supabase/migrations/004_enrollments_progress.sql`
+- [x] T024 Create RLS policies for `enrollments` (own rows, authenticated insert) and `progress` (own rows, authenticated upsert) in `src/supabase/migrations/005_rls_progress.sql`
+- [x] T025 [P] [US1] Implement course data access functions in `src/lib/supabase/queries/courses.ts`: `getPublishedCourses(level?)`, `getCourseBySlug(slug)`, `getCourseWithModules(slug)`
+- [x] T026 [P] [US1] Implement progress data access functions in `src/lib/supabase/queries/progress.ts`: `getUserProgress(userId, courseId)`, `upsertLessonProgress(userId, lessonId, position, completed)`, `getEnrollments(userId)`
+- [x] T027 [P] [US1] Implement Bunny.net signed URL generation in `src/lib/bunny/signed-urls.ts` with HMAC-SHA256 and 4-hour expiry
+- [x] T028 [US1] Implement `GET /api/courses` Route Handler in `src/app/api/courses/route.ts` with level filter and pagination per contracts/api-routes.md
+- [x] T029 [US1] Implement `GET /api/courses/[slug]` Route Handler in `src/app/api/courses/[slug]/route.ts` returning course with modules and lessons
+- [x] T030 [US1] Implement `GET /api/lessons/[slug]/video` Route Handler in `src/app/api/lessons/[slug]/video/route.ts` with signed URL generation and free preview check
+- [x] T031 [US1] Implement `POST /api/progress` Route Handler in `src/app/api/progress/route.ts` for lesson position and completion updates
+- [x] T032 [US1] Implement `POST /api/enrollments` Route Handler in `src/app/api/enrollments/route.ts` for course enrollment
+- [x] T033 [P] [US1] Create CourseCard component in `src/components/course/course-card.tsx` displaying title, level badge, duration, thumbnail
+- [x] T034 [P] [US1] Create CourseProgressBar component in `src/components/course/progress-bar.tsx` showing module and overall completion
+- [x] T035 [US1] Build course catalog page (Server Component) in `src/app/(marketing)/courses/page.tsx` with level filter tabs and course grid
+- [x] T036 [US1] Build course detail page in `src/app/(platform)/courses/[courseSlug]/page.tsx` showing modules, lessons, and enrollment button
+- [x] T037 [P] [US1] Create VideoPlayer client component in `src/components/video/video-player.tsx` with Bunny.net iframe embed, chapter navigation, playback speed (0.5x-2x), quality selection
+- [x] T038 [P] [US1] Create TranscriptViewer client component in `src/components/video/transcript-viewer.tsx` with synchronized French transcript and click-to-seek
+- [x] T039 [US1] Build lesson page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx` with video player, transcript sidebar, auto-resume from last position, and progress tracking on completion
+- [x] T040 [US1] Build auth pages: login in `src/app/(auth)/login/page.tsx`, register in `src/app/(auth)/register/page.tsx`, and password reset in `src/app/(auth)/reset-password/page.tsx` with email + Google OAuth, French-first UI
+- [x] T041 [US1] Build user dashboard page in `src/app/(platform)/dashboard/page.tsx` showing enrolled courses, per-lesson completion, module progress bars, overall percentage
+- [x] T042 [US1] Implement `GET /api/dashboard` Route Handler in `src/app/api/dashboard/route.ts` aggregating enrollments, progress, and subscription status
+- [x] T043 [US1] Build landing page in `src/app/(marketing)/page.tsx` with hero section, featured courses, value proposition in French
+- [x] T044 [US1] Implement French SEO meta tags, Open Graph tags, and Course structured data (JSON-LD) in `src/app/(marketing)/courses/page.tsx` and `src/app/(marketing)/page.tsx` per FR-024
+- [x] T045 [US1] Add French/English subtitle track support (WebVTT) to VideoPlayer component in `src/components/video/video-player.tsx` per FR-026
 
 **Checkpoint**: Visitors can browse courses, watch free previews, create accounts, and track progress. Story 1 is fully functional and testable independently.
 
