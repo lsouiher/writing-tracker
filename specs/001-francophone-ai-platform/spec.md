@@ -125,12 +125,12 @@ A Pro user shares a unique referral link with a friend. When the friend signs up
 - **FR-004**: System MUST track per-lesson completion and display module progress bars and overall course percentage on the user dashboard
 - **FR-005**: System MUST provide an embedded video player with chapter navigation, adjustable playback speed (0.5x-2x), quality selection, and auto-resume from last position. Video URLs MUST be signed with expiry to prevent unauthorized direct access
 - **FR-006**: System MUST display synchronized French transcripts alongside video with click-to-seek functionality
-- **FR-007**: System MUST support two subscription tiers: Free (video access, read-only community, basic progress) and Pro (labs, quizzes, AI tutor, certificates, full community, personalized paths)
+- **FR-007**: System MUST support two subscription tiers: Free (video access, read-only community, basic progress) and Pro (labs, quizzes, AI tutor, certificates, full community). Personalized learning paths are deferred to a future phase
 - **FR-008**: System MUST offer a 7-day free trial for the Pro tier, collecting a payment method upfront, with automatic conversion to paid at trial end. Upon cancellation, Pro access is retained until the end of the current paid billing period
 - **FR-009**: System MUST auto-detect user country and apply purchasing-power-parity pricing for supported regions (Algeria, Morocco, Tunisia, West Africa, Canada)
 - **FR-010**: System MUST support monthly and annual Pro subscription billing in EUR, CAD, and USD. System MUST support admin-created coupon codes with configurable discount percentage and usage limits for promotional pricing
 - **FR-011**: System MUST provide an AI-powered tutor sidebar on each lesson page (Pro only) that answers questions in French using the lesson transcript and module context
-- **FR-012**: System MUST meter AI tutor usage: free users get 5 questions per day; Pro users get unlimited access
+- **FR-012**: System MUST meter AI tutor usage: free users get 5 questions per day; Pro users get unlimited access with burst protection (30 questions per hour)
 - **FR-013**: System MUST constrain the AI tutor to course-related topics only, gracefully declining off-topic queries
 - **FR-014**: System MUST provide browser-based interactive coding labs (Pro only) with pre-configured environments and persisted student code
 - **FR-015**: System MUST support auto-graded quizzes (multiple choice + short answer) after each module with instant feedback in French. A minimum score of 70% is required to pass, with unlimited retakes permitted

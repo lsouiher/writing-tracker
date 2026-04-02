@@ -263,6 +263,53 @@ Submit quiz answers.
 }
 ```
 
+### POST /api/capstones
+Submit a capstone project. Pro only.
+
+**Body**:
+```json
+{
+  "course_id": "uuid",
+  "title": "Mon projet de Machine Learning",
+  "description": "Application de classification d'images...",
+  "repository_url": "https://github.com/user/project",
+  "submitted_code": null
+}
+```
+
+**Response 201**: `{ "data": { "submission_id": "uuid", "status": "submitted" }, "error": null }`
+
+### POST /api/capstones/[submissionId]/grade
+Trigger AI grading for a capstone. Pro only (owner).
+
+**Response 200**:
+```json
+{
+  "data": {
+    "score": 82,
+    "status": "graded",
+    "feedback": "Excellent travail sur la classification d'images. Points forts: ...",
+    "passed": true
+  },
+  "error": null
+}
+```
+
+### POST /api/capstones/[submissionId]/review
+Submit a peer review for an open capstone. Pro only.
+
+**Body**:
+```json
+{
+  "rating": 4,
+  "comment": "Très bon projet, la documentation est claire..."
+}
+```
+
+**Response 201**: `{ "data": { "review_id": "uuid" }, "error": null }`
+
+---
+
 ### GET /api/community/[courseSlug]/posts
 List community posts for a course. Read access for all authenticated users.
 

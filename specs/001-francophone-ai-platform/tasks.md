@@ -41,6 +41,7 @@
 - [ ] T011 Create Supabase migration for `users` table with all columns, indexes, and soft delete per `data-model.md` in `src/supabase/migrations/001_users.sql`
 - [ ] T012 Create Supabase migration for `courses`, `modules`, `lessons` tables with all columns, indexes, and relationships in `src/supabase/migrations/002_content.sql`
 - [ ] T013 Create RLS policies for `users` (own row read/write), `courses`/`modules`/`lessons` (public read, admin write) in `src/supabase/migrations/003_rls_base.sql`
+- [ ] T013b Implement Supabase `subscription_status(user_uuid)` SQL function returning 'free' or 'pro' by querying subscriptions table, in `src/supabase/migrations/003b_subscription_fn.sql` — required by all Pro-gated RLS policies in later phases
 - [ ] T014 [P] Implement Supabase server client factory in `src/lib/supabase/server.ts` using @supabase/ssr with cookie handling
 - [ ] T015 [P] Implement Supabase browser client factory in `src/lib/supabase/client.ts`
 - [ ] T016 Implement auth middleware in `src/middleware.ts` that refreshes Supabase session on every request and protects `/dashboard`, `/admin` routes
@@ -49,7 +50,7 @@
 - [ ] T019 [P] Create shared UI primitives: Button, Card, Badge, Input, Modal components in `src/components/ui/`
 - [ ] T020 Create seed data script with sample courses, modules, and lessons in `src/supabase/seed.sql`
 - [ ] T021 [P] Implement PostHog provider wrapper in `src/components/providers/posthog-provider.tsx` with cookie-less tracking mode
-- [ ] T022 [P] Create `src/lib/supabase/queries/users.ts` with `getUserProfile()`, `updateUserProfile()`, `getUserTier()` data access functions
+- [ ] T022 [P] Create `src/lib/supabase/queries/users.ts` with `getUserProfile()`, `updateUserProfile()` data access functions (note: `getUserTier()` lives in `queries/subscriptions.ts` — see T050)
 
 **Checkpoint**: Foundation ready — user story implementation can now begin
 
@@ -80,7 +81,7 @@
 - [ ] T037 [P] [US1] Create VideoPlayer client component in `src/components/video/video-player.tsx` with Bunny.net iframe embed, chapter navigation, playback speed (0.5x-2x), quality selection
 - [ ] T038 [P] [US1] Create TranscriptViewer client component in `src/components/video/transcript-viewer.tsx` with synchronized French transcript and click-to-seek
 - [ ] T039 [US1] Build lesson page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx` with video player, transcript sidebar, auto-resume from last position, and progress tracking on completion
-- [ ] T040 [US1] Build auth pages: login in `src/app/(auth)/login/page.tsx` and register in `src/app/(auth)/register/page.tsx` with email + Google OAuth, French-first UI
+- [ ] T040 [US1] Build auth pages: login in `src/app/(auth)/login/page.tsx`, register in `src/app/(auth)/register/page.tsx`, and password reset in `src/app/(auth)/reset-password/page.tsx` with email + Google OAuth, French-first UI
 - [ ] T041 [US1] Build user dashboard page in `src/app/(platform)/dashboard/page.tsx` showing enrolled courses, per-lesson completion, module progress bars, overall percentage
 - [ ] T042 [US1] Implement `GET /api/dashboard` Route Handler in `src/app/api/dashboard/route.ts` aggregating enrollments, progress, and subscription status
 - [ ] T043 [US1] Build landing page in `src/app/(marketing)/page.tsx` with hero section, featured courses, value proposition in French
@@ -145,8 +146,16 @@
 - [ ] T076 [US3] Build certificate verification page (public) in `src/app/verify/[code]/page.tsx` displaying holder name, course title, and completion date
 - [ ] T077 [US3] Build certificates list page in `src/app/(platform)/certificates/page.tsx` showing earned certificates with download links
 - [ ] T078 [US3] Add certificate download and lab/quiz completion status to dashboard in `src/app/(platform)/dashboard/page.tsx`
+- [ ] T138 Create Supabase migration for `capstone_submissions` and `capstone_reviews` tables in `src/supabase/migrations/008b_capstones.sql`
+- [ ] T139 Create RLS policies for capstone_submissions (Pro own rows + course peers if peer_review_open) and capstone_reviews (Pro on open submissions) in `src/supabase/migrations/009b_rls_capstones.sql`
+- [ ] T140 [P] [US3] Implement capstone data access in `src/lib/supabase/queries/capstones.ts`: `submitCapstone(userId, courseId, data)`, `getCapstone(userId, courseId)`, `getOpenCapstones(courseId)`, `submitReview(submissionId, reviewerId, data)`
+- [ ] T141 [US3] Implement capstone AI grading Route Handler in `src/app/api/capstones/[submissionId]/grade/route.ts` using Claude API with course rubric context, French feedback, 70% pass threshold
+- [ ] T142 [US3] Implement `POST /api/capstones` Route Handler in `src/app/api/capstones/route.ts` for capstone submission (Pro only)
+- [ ] T143 [US3] Implement `POST /api/capstones/[submissionId]/review` Route Handler in `src/app/api/capstones/[submissionId]/review/route.ts` for peer review submission (Pro only, on open submissions)
+- [ ] T144 [US3] Build capstone submission page in `src/app/(platform)/courses/[courseSlug]/capstone/page.tsx` with project description form, code/repo submission, AI grading status, peer reviews display
+- [ ] T145 [US3] Update certificate eligibility check in `src/lib/supabase/queries/certificates.ts` to require capstone approval (status='approved') in addition to lessons, labs, and quizzes
 
-**Checkpoint**: Pro users can complete full courses with labs, quizzes, and earn verifiable certificates.
+**Checkpoint**: Pro users can complete full courses with labs, quizzes, capstone projects, and earn verifiable certificates.
 
 ---
 
@@ -233,8 +242,12 @@
 - [ ] T116 Build admin moderation queue page in `src/app/(admin)/moderation/page.tsx` with flagged posts list, approve/remove actions
 - [ ] T117 Build admin coupon management page in `src/app/(admin)/coupons/page.tsx` with create form and usage tracking
 - [ ] T118 Build admin AI tutor logs page in `src/app/(admin)/ai-logs/page.tsx` for reviewing Q&A quality and off-topic detection
+- [ ] T146 [P] Implement admin course CRUD Route Handlers in `src/app/api/admin/courses/route.ts` and `src/app/api/admin/courses/[courseId]/route.ts` for creating, updating, and managing courses/modules/lessons
+- [ ] T147 Build admin content management page in `src/app/(admin)/content/page.tsx` with course list, create/edit forms for courses, modules, and lessons
+- [ ] T148 [P] Implement admin user management Route Handlers in `src/app/api/admin/users/route.ts` for listing users with filters (tier, role, country) and `src/app/api/admin/users/[userId]/route.ts` for viewing/editing user details and role changes
+- [ ] T149 Build admin user management page in `src/app/(admin)/users/page.tsx` with user list, search/filter, role editing, and subscription status overview
 
-**Checkpoint**: Admin panel provides full platform management capabilities.
+**Checkpoint**: Admin panel provides full platform management capabilities including content and user management.
 
 ---
 
@@ -263,7 +276,6 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T127 [P] Implement Supabase `subscription_status()` SQL function used by RLS policies across all Pro-gated tables in `src/supabase/migrations/018_subscription_fn.sql`
 - [ ] T128 [P] Add rate limiting middleware for all public API endpoints in `src/lib/redis/api-rate-limit.ts` using Upstash Redis
 - [ ] T129 [P] Implement French/English language toggle in `src/components/ui/language-toggle.tsx` and integrate into app layout
 - [ ] T130 [P] Add unsubscribe one-click link to all marketing emails per GDPR in `src/lib/email/templates/`
@@ -401,4 +413,4 @@ Since this is a solo-developer project:
 - Each user story is independently completable and testable at its checkpoint
 - Commit after each task or logical group
 - Stop at any checkpoint to validate the story independently
-- The `subscription_status()` SQL function (T127) should ideally be created earlier if RLS policies reference it — move to Phase 2 if needed during implementation
+- The `subscription_status()` SQL function is in Phase 2 (T013b) so all Pro-gated RLS policies can reference it

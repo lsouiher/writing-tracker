@@ -299,6 +299,50 @@ Note: No unique constraint — unlimited retakes allowed.
 
 ---
 
+### capstone_submissions
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NOT NULL | gen_random_uuid() | PK |
+| user_id | uuid | NOT NULL | | FK → users.id |
+| course_id | uuid | NOT NULL | | FK → courses.id |
+| title | text | NOT NULL | | Submission title |
+| description | text | NOT NULL | | Student's description of their project |
+| repository_url | text | NULL | | Nullable: not all capstones are code-based |
+| submitted_code | text | NULL | | Nullable: alternative to repository_url |
+| ai_score | integer | NULL | | Nullable: score assigned after AI grading (0-100) |
+| ai_feedback | text | NULL | | Nullable: AI-generated rubric feedback in French |
+| status | text | NOT NULL | 'submitted' | 'submitted', 'grading', 'graded', 'approved' |
+| peer_review_open | boolean | NOT NULL | false | Whether community peer review is enabled |
+| submitted_at | timestamptz | NOT NULL | now() | |
+| graded_at | timestamptz | NULL | | Nullable: only set after AI grading completes |
+
+**Indexes**: (`user_id`, `course_id`) unique, `course_id`, `status`
+
+**State transitions**:
+```
+submitted → grading (AI grading triggered)
+grading → graded (AI grading complete)
+graded → approved (score ≥ 70% auto-approved, or manual admin approval)
+```
+
+---
+
+### capstone_reviews
+
+| Column | Type | Nullable | Default | Notes |
+|--------|------|----------|---------|-------|
+| id | uuid | NOT NULL | gen_random_uuid() | PK |
+| submission_id | uuid | NOT NULL | | FK → capstone_submissions.id |
+| reviewer_id | uuid | NOT NULL | | FK → users.id |
+| rating | integer | NOT NULL | | 1-5 scale |
+| comment | text | NOT NULL | | Reviewer's feedback |
+| created_at | timestamptz | NOT NULL | now() | |
+
+**Indexes**: (`submission_id`, `reviewer_id`) unique, `submission_id`
+
+---
+
 ### team_licenses
 
 | Column | Type | Nullable | Default | Notes |
@@ -397,6 +441,8 @@ Note: No unique constraint — unlimited retakes allowed.
 | community_posts | Authenticated (read) | Pro users (write) | — |
 | post_votes | Own rows | Pro users | Own rows |
 | ai_tutor_logs | Own rows | Server only | — |
+| capstone_submissions | Own rows + course peers (if peer_review_open) | Pro users (own rows) | — |
+| capstone_reviews | Submission owner + reviewer | Pro users (on open submissions) | — |
 | team_licenses | Admin of team | Server only | — |
 | team_members | Team admin + own row | Team admin | — |
 | referrals | Own rows (as referrer) | Server only | — |
