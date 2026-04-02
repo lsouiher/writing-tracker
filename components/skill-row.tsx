@@ -43,7 +43,7 @@ export function SkillRow({
             key={pip}
             onClick={() => handlePipClick(pip)}
             disabled={isPending}
-            className={`h-9 w-9 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-paper ${
+            className={`h-11 w-11 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-paper ${
               pip <= rating
                 ? 'bg-accent'
                 : 'bg-accent-light/40 hover:bg-accent-light'

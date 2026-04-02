@@ -1,13 +1,15 @@
 import Database from 'better-sqlite3';
+import fs from 'fs';
 import path from 'path';
 
 const DB_PATH = path.join(process.cwd(), 'data', 'writing-tracker.db');
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 const globalForDb = globalThis as unknown as { db: Database.Database };
 
 function createDb(): Database.Database {
   const db = new Database(DB_PATH);
-  db.pragma('journal_mode = DELETE');
+  db.pragma('journal_mode = WAL');
   db.pragma('foreign_keys = ON');
 
   db.exec(`

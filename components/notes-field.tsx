@@ -15,9 +15,19 @@ export function NotesField({
   const weekRef = useRef(weekNumber);
 
   useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
     setValue(initialNotes);
     weekRef.current = weekNumber;
   }, [weekNumber, initialNotes]);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const save = useCallback(
     (text: string) => {

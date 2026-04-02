@@ -1,5 +1,5 @@
 import { getUserState, getAllWeekLogs } from '@/lib/queries';
-import { getPhaseForWeek, phases } from '@/lib/program-content';
+import { phases } from '@/lib/program-content';
 import { WeekGrid } from '@/components/week-grid';
 
 export default function LogPage() {
@@ -12,7 +12,8 @@ export default function LogPage() {
   const recentNotes: { week: number; notes: string }[] = [];
 
   for (const log of allLogs) {
-    const days: number[] = JSON.parse(log.days);
+    let days: number[];
+    try { days = JSON.parse(log.days); } catch { days = []; }
     weekData.set(log.week_number, days.length);
     totalDays += days.length;
     if (days.length > 0) weeksActive++;
@@ -22,7 +23,7 @@ export default function LogPage() {
   }
 
   const lastFiveNotes = recentNotes.slice(-5).reverse();
-  const currentPhase = phases[state.current_phase]!;
+  const currentPhase = phases[state.current_phase] ?? phases[0];
 
   return (
     <div className="space-y-8">

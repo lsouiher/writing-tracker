@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { setCurrentPhase } from '@/actions/phase-actions';
 import type { Phase } from '@/lib/program-content';
 
 export function PhaseCard({
   phase,
   isCurrent,
-  isExpanded: initialExpanded,
+  isExpanded,
   onExpand,
 }: {
   phase: Phase;
@@ -17,13 +17,10 @@ export function PhaseCard({
 }) {
   const [isPending, startTransition] = useTransition();
 
-  function handleClick() {
-    onExpand();
-    if (!isCurrent) {
-      startTransition(() => {
-        setCurrentPhase(phase.id);
-      });
-    }
+  function handleSetCurrent() {
+    startTransition(() => {
+      setCurrentPhase(phase.id);
+    });
   }
 
   return (
@@ -33,10 +30,9 @@ export function PhaseCard({
       }`}
     >
       <button
-        onClick={handleClick}
-        disabled={isPending}
+        onClick={onExpand}
         className="flex w-full items-center justify-between p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent rounded-lg"
-        aria-expanded={initialExpanded}
+        aria-expanded={isExpanded}
       >
         <div>
           <div className="flex items-center gap-2">
@@ -62,10 +58,10 @@ export function PhaseCard({
             ))}
           </div>
         </div>
-        <span className="ml-2 text-ink-light">{initialExpanded ? '▲' : '▼'}</span>
+        <span className="ml-2 text-ink-light">{isExpanded ? '▲' : '▼'}</span>
       </button>
 
-      {initialExpanded && (
+      {isExpanded && (
         <div className="border-t border-accent-light px-4 pb-4 pt-3">
           <p className="mb-3 text-sm font-medium">{phase.weeklyGoal}</p>
 
@@ -78,6 +74,16 @@ export function PhaseCard({
 
           <h3 className="mb-1 text-sm font-semibold">Friend session prompt</h3>
           <p className="text-sm italic text-ink-light">{phase.friendPrompt}</p>
+
+          {!isCurrent && (
+            <button
+              onClick={handleSetCurrent}
+              disabled={isPending}
+              className="mt-4 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-paper transition-colors hover:bg-accent/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper disabled:opacity-50"
+            >
+              Set as current phase
+            </button>
+          )}
         </div>
       )}
     </div>

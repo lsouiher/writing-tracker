@@ -14,7 +14,7 @@ function validateDayIndex(dayIndex: number): void {
   }
 }
 
-export function toggleDay(weekNumber: number, dayIndex: number): void {
+export const toggleDay = db.transaction((weekNumber: number, dayIndex: number): void => {
   validateWeekNumber(weekNumber);
   validateDayIndex(dayIndex);
 
@@ -39,7 +39,7 @@ export function toggleDay(weekNumber: number, dayIndex: number): void {
   db.prepare(
     `UPDATE week_logs SET days = ?, updated_at = datetime('now') WHERE week_number = ?`
   ).run(JSON.stringify(days), weekNumber);
-}
+});
 
 export function saveNotes(weekNumber: number, notes: string): void {
   validateWeekNumber(weekNumber);

@@ -16,4 +16,5 @@ export async function saveNotes(weekNumber: number, notes: string): Promise<void
 export async function navigateWeek(weekNumber: number): Promise<void> {
   updateCurrentWeek(weekNumber);
   revalidatePath('/this-week');
+  revalidatePath('/log');
 }

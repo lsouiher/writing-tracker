@@ -1,11 +1,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
+import { navigateWeek } from '@/actions/week-actions';
 
 export function WeekNavigator({ weekNumber }: { weekNumber: number }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   function goTo(week: number) {
+    startTransition(() => {
+      navigateWeek(week);
+    });
     router.push(`/this-week?week=${week}`);
   }
 

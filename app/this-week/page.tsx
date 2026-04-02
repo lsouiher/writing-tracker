@@ -16,7 +16,8 @@ export default function ThisWeekPage({
     : state.current_week;
 
   const weekLog = getWeekLog(viewedWeek);
-  const markedDays: number[] = weekLog ? JSON.parse(weekLog.days) : [];
+  let markedDays: number[] = [];
+  if (weekLog) { try { markedDays = JSON.parse(weekLog.days); } catch { /* corrupt data fallback */ } }
   const notes = weekLog?.notes ?? '';
 
   const phase = getPhaseForWeek(viewedWeek);
