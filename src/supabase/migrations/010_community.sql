@@ -47,3 +47,14 @@ CREATE TABLE moderation_flags (
 CREATE INDEX idx_moderation_flags_post_id ON moderation_flags(post_id);
 CREATE INDEX idx_moderation_flags_reviewed ON moderation_flags(reviewed);
 CREATE INDEX idx_moderation_flags_reviewed_created ON moderation_flags(reviewed, created_at);
+
+-- Helper functions for atomic upvote count changes
+CREATE OR REPLACE FUNCTION increment_upvote(p_post_id uuid)
+RETURNS void AS $$
+  UPDATE community_posts SET upvote_count = upvote_count + 1 WHERE id = p_post_id;
+$$ LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION decrement_upvote(p_post_id uuid)
+RETURNS void AS $$
+  UPDATE community_posts SET upvote_count = GREATEST(upvote_count - 1, 0) WHERE id = p_post_id;
+$$ LANGUAGE sql;

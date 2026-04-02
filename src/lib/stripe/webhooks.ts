@@ -93,6 +93,53 @@ export async function handleInvoicePaid(invoice: Stripe.Invoice) {
     .eq('stripe_subscription_id', subscriptionId)
 }
 
+export async function handleTeamCheckoutCompleted(session: Stripe.Checkout.Session) {
+  if (session.metadata?.type !== 'team') return
+
+  const supabase = getServiceClient()
+  const userId = session.metadata?.user_id
+  const subscriptionId = session.subscription as string
+  const seatCount = parseInt(session.metadata?.seat_count || '0', 10)
+
+  if (!userId || !subscriptionId || !seatCount) return
+
+  // Create team license
+  await supabase.from('team_licenses').insert({
+    admin_id: userId,
+    stripe_subscription_id: subscriptionId,
+    seat_count: seatCount,
+    seats_used: 0,
+    status: 'active',
+  })
+
+  // Update user role to team_admin
+  await supabase
+    .from('users')
+    .update({ role: 'team_admin' })
+    .eq('id', userId)
+}
+
+export async function handleTeamSubscriptionDeleted(subscription: Stripe.Subscription) {
+  const supabase = getServiceClient()
+
+  // Expire the team license
+  const { data: license } = await supabase
+    .from('team_licenses')
+    .update({ status: 'expired' })
+    .eq('stripe_subscription_id', subscription.id)
+    .select('id')
+    .single()
+
+  if (!license) return
+
+  // Soft-remove all team members
+  await supabase
+    .from('team_members')
+    .update({ removed_at: new Date().toISOString() })
+    .eq('team_license_id', license.id)
+    .is('removed_at', null)
+}
+
 function mapStripeStatus(stripeStatus: string): string {
   const map: Record<string, string> = {
     trialing: 'trialing',

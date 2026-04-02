@@ -167,19 +167,19 @@
 
 ### Implementation for User Story 4
 
-- [ ] T079 Create Supabase migration for `community_posts`, `post_votes`, `moderation_flags` tables in `src/supabase/migrations/010_community.sql`
-- [ ] T080 Create RLS policies: community_posts (authenticated read, Pro write), post_votes (Pro own rows), moderation_flags (admin only) in `src/supabase/migrations/011_rls_community.sql`
-- [ ] T081 [P] [US4] Implement community data access in `src/lib/supabase/queries/community.ts`: `getPostsByCourse(courseSlug, sort, cursor)`, `createPost(data)`, `createReply(data)`, `toggleVote(userId, postId)`, `getFlaggedPosts()`
-- [ ] T082 [P] [US4] Implement AI content moderation in `src/lib/ai-tutor/moderation.ts` using Claude API to classify post content and flag violations with reason
-- [ ] T083 [US4] Implement `GET /api/community/[courseSlug]/posts` Route Handler in `src/app/api/community/[courseSlug]/posts/route.ts` with cursor-based pagination and sort (recent/top)
-- [ ] T084 [US4] Implement `POST /api/community/[courseSlug]/posts` Route Handler in `src/app/api/community/[courseSlug]/posts/route.ts` for creating posts/replies (Pro only), triggering AI moderation
-- [ ] T085 [US4] Implement `POST /api/community/posts/[postId]/vote` Route Handler in `src/app/api/community/posts/[postId]/vote/route.ts` for toggle upvote (Pro only)
-- [ ] T086 [P] [US4] Create ForumPostCard component in `src/components/community/forum-post-card.tsx` with title, body preview, author, upvote count, reply count, vote button
-- [ ] T087 [P] [US4] Create ForumThread component in `src/components/community/forum-thread.tsx` with threaded replies, reply form, upvote interactions
-- [ ] T088 [US4] Build course community forum page in `src/app/(platform)/community/[courseSlug]/page.tsx` with post list, sort tabs, new post button (Pro only), free user read-only notice
-- [ ] T089 [US4] Build forum thread page in `src/app/(platform)/community/[courseSlug]/[postId]/page.tsx` with full thread, replies, and reply form
-- [ ] T090 [US4] Implement weekly digest email in `src/lib/email/templates/weekly-digest.tsx` and `src/app/api/cron/weekly-digest/route.ts` (Vercel Cron) aggregating top posts and new courses
-- [ ] T091 [US4] Configure Vercel Cron job in `vercel.json` for weekly digest (`0 9 * * 1` — Monday 9 AM)
+- [x] T079 Create Supabase migration for `community_posts`, `post_votes`, `moderation_flags` tables in `src/supabase/migrations/010_community.sql`
+- [x] T080 Create RLS policies: community_posts (authenticated read, Pro write), post_votes (Pro own rows), moderation_flags (admin only) in `src/supabase/migrations/011_rls_community.sql`
+- [x] T081 [P] [US4] Implement community data access in `src/lib/supabase/queries/community.ts`: `getPostsByCourse(courseSlug, sort, cursor)`, `createPost(data)`, `createReply(data)`, `toggleVote(userId, postId)`, `getFlaggedPosts()`
+- [x] T082 [P] [US4] Implement AI content moderation in `src/lib/ai-tutor/moderation.ts` using Claude API to classify post content and flag violations with reason
+- [x] T083 [US4] Implement `GET /api/community/[courseSlug]/posts` Route Handler in `src/app/api/community/[courseSlug]/posts/route.ts` with cursor-based pagination and sort (recent/top)
+- [x] T084 [US4] Implement `POST /api/community/[courseSlug]/posts` Route Handler in `src/app/api/community/[courseSlug]/posts/route.ts` for creating posts/replies (Pro only), triggering AI moderation
+- [x] T085 [US4] Implement `POST /api/community/posts/[postId]/vote` Route Handler in `src/app/api/community/posts/[postId]/vote/route.ts` for toggle upvote (Pro only)
+- [x] T086 [P] [US4] Create ForumPostCard component in `src/components/community/forum-post-card.tsx` with title, body preview, author, upvote count, reply count, vote button
+- [x] T087 [P] [US4] Create ForumThread component in `src/components/community/forum-thread.tsx` with threaded replies, reply form, upvote interactions
+- [x] T088 [US4] Build course community forum page in `src/app/(platform)/community/[courseSlug]/page.tsx` with post list, sort tabs, new post button (Pro only), free user read-only notice
+- [x] T089 [US4] Build forum thread page in `src/app/(platform)/community/[courseSlug]/[postId]/page.tsx` with full thread, replies, and reply form
+- [x] T090 [US4] Implement weekly digest email in `src/lib/email/templates/weekly-digest.tsx` and `src/app/api/cron/weekly-digest/route.ts` (Vercel Cron) aggregating top posts and new courses
+- [x] T091 [US4] Configure Vercel Cron job in `vercel.json` for weekly digest (`0 9 * * 1` — Monday 9 AM)
 
 **Checkpoint**: Community forums are functional with Q&A, voting, AI moderation, and weekly digest emails.
 
@@ -193,18 +193,18 @@
 
 ### Implementation for User Story 5
 
-- [ ] T092 Create Supabase migration for `team_licenses` and `team_members` tables in `src/supabase/migrations/012_teams.sql`
-- [ ] T093 Create RLS policies: team_licenses (admin of team), team_members (team admin + own row) in `src/supabase/migrations/013_rls_teams.sql`
-- [ ] T094 [P] [US5] Implement team data access in `src/lib/supabase/queries/teams.ts`: `createTeamLicense(data)`, `inviteTeamMember(licenseId, email)`, `getTeamMembers(licenseId)`, `getTeamProgress(licenseId)`, `removeTeamMember(memberId)`
-- [ ] T095 [US5] Implement `POST /api/teams/checkout` Route Handler in `src/app/api/teams/checkout/route.ts` creating Stripe Checkout for team license with volume pricing by seat count
-- [ ] T096 [US5] Implement `POST /api/teams/invite` Route Handler in `src/app/api/teams/invite/route.ts` for batch email invitations, sending invite emails via Resend
-- [ ] T097 [US5] Implement `GET /api/teams/dashboard` Route Handler in `src/app/api/teams/dashboard/route.ts` returning member list, completion rates, engagement metrics
-- [ ] T098 [US5] Implement `DELETE /api/teams/members/[memberId]` Route Handler in `src/app/api/teams/members/[memberId]/route.ts` for immediate seat removal
-- [ ] T099 [US5] Add team license webhook handling to `src/lib/stripe/webhooks.ts` for team subscription events (create, cancel, expire → update team_members)
-- [ ] T100 [P] [US5] Create team invite email template in `src/lib/email/templates/team-invite.tsx`
-- [ ] T101 [US5] Build teams marketing page in `src/app/(marketing)/teams/page.tsx` with seat count selector, volume pricing table, self-serve checkout
-- [ ] T102 [US5] Build team admin dashboard page in `src/app/(platform)/teams/page.tsx` with member list, invite form, progress tracking, exportable reports
-- [ ] T103 [US5] Implement team member invite acceptance flow: accept link in `src/app/(auth)/accept-invite/page.tsx` that activates Pro access for the team member
+- [x] T092 Create Supabase migration for `team_licenses` and `team_members` tables in `src/supabase/migrations/012_teams.sql`
+- [x] T093 Create RLS policies: team_licenses (admin of team), team_members (team admin + own row) in `src/supabase/migrations/013_rls_teams.sql`
+- [x] T094 [P] [US5] Implement team data access in `src/lib/supabase/queries/teams.ts`: `createTeamLicense(data)`, `inviteTeamMember(licenseId, email)`, `getTeamMembers(licenseId)`, `getTeamProgress(licenseId)`, `removeTeamMember(memberId)`
+- [x] T095 [US5] Implement `POST /api/teams/checkout` Route Handler in `src/app/api/teams/checkout/route.ts` creating Stripe Checkout for team license with volume pricing by seat count
+- [x] T096 [US5] Implement `POST /api/teams/invite` Route Handler in `src/app/api/teams/invite/route.ts` for batch email invitations, sending invite emails via Resend
+- [x] T097 [US5] Implement `GET /api/teams/dashboard` Route Handler in `src/app/api/teams/dashboard/route.ts` returning member list, completion rates, engagement metrics
+- [x] T098 [US5] Implement `DELETE /api/teams/members/[memberId]` Route Handler in `src/app/api/teams/members/[memberId]/route.ts` for immediate seat removal
+- [x] T099 [US5] Add team license webhook handling to `src/lib/stripe/webhooks.ts` for team subscription events (create, cancel, expire → update team_members)
+- [x] T100 [P] [US5] Create team invite email template in `src/lib/email/templates/team-invite.tsx`
+- [x] T101 [US5] Build teams marketing page in `src/app/(marketing)/teams/page.tsx` with seat count selector, volume pricing table, self-serve checkout
+- [x] T102 [US5] Build team admin dashboard page in `src/app/(platform)/teams/page.tsx` with member list, invite form, progress tracking, exportable reports
+- [x] T103 [US5] Implement team member invite acceptance flow: accept link in `src/app/(auth)/accept-invite/page.tsx` that activates Pro access for the team member
 
 **Checkpoint**: B2B team licenses are functional with self-serve purchase, invitations, and admin analytics.
 
