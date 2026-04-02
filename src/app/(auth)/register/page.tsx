@@ -32,13 +32,12 @@ function RegisterForm() {
     setError('')
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: fullName,
-          referred_by: referralCode || undefined,
         },
       },
     })
@@ -49,15 +48,31 @@ function RegisterForm() {
       return
     }
 
+    // Track referral if a code was provided and signup succeeded
+    if (referralCode && signUpData.user) {
+      try {
+        await fetch('/api/referrals/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ referralCode }),
+        })
+      } catch {
+        // Non-blocking: referral tracking failure shouldn't block signup
+      }
+    }
+
     setSuccess(true)
     setLoading(false)
   }
 
   async function handleGoogleRegister() {
     const supabase = createClient()
+    const redirectUrl = referralCode
+      ? `${window.location.origin}/dashboard?ref=${referralCode}`
+      : `${window.location.origin}/dashboard`
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` },
+      options: { redirectTo: redirectUrl },
     })
   }
 

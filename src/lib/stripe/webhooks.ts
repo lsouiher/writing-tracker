@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import type Stripe from 'stripe'
+import { applyReferralReward } from './referrals'
 
 // Use service role for webhook processing (bypasses RLS)
 function getServiceClient() {
@@ -91,6 +92,68 @@ export async function handleInvoicePaid(invoice: Stripe.Invoice) {
     .from('subscriptions')
     .update(updates)
     .eq('stripe_subscription_id', subscriptionId)
+
+  // Check for pending referral and complete it
+  await processReferralReward(supabase, subscriptionId)
+}
+
+async function processReferralReward(
+  supabase: ReturnType<typeof getServiceClient>,
+  stripeSubscriptionId: string
+) {
+  // Get the subscription to find the user
+  const { data: subscription } = await supabase
+    .from('subscriptions')
+    .select('user_id, stripe_customer_id')
+    .eq('stripe_subscription_id', stripeSubscriptionId)
+    .single()
+
+  if (!subscription) return
+
+  // Check if this user was referred and has a pending referral
+  const { data: referral } = await supabase
+    .from('referrals')
+    .select('id, referrer_id')
+    .eq('referee_id', subscription.user_id)
+    .eq('status', 'pending')
+    .single()
+
+  if (!referral) return
+
+  // Get the referrer's Stripe customer ID
+  const { data: referrerSub } = await supabase
+    .from('subscriptions')
+    .select('stripe_customer_id')
+    .eq('user_id', referral.referrer_id)
+    .in('status', ['active', 'trialing'])
+    .single()
+
+  if (!referrerSub) return
+
+  // Apply Stripe credits to both parties
+  try {
+    await applyReferralReward(referrerSub.stripe_customer_id, subscription.stripe_customer_id)
+
+    // Mark referral as completed with reward applied
+    await supabase
+      .from('referrals')
+      .update({
+        status: 'completed',
+        reward_applied: true,
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', referral.id)
+  } catch (err) {
+    console.error('Failed to apply referral reward:', err)
+    // Still complete the referral even if reward fails
+    await supabase
+      .from('referrals')
+      .update({
+        status: 'completed',
+        completed_at: new Date().toISOString(),
+      })
+      .eq('id', referral.id)
+  }
 }
 
 export async function handleTeamCheckoutCompleted(session: Stripe.Checkout.Session) {

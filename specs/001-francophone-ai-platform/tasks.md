@@ -218,13 +218,13 @@
 
 ### Implementation for User Story 6
 
-- [ ] T104 Create Supabase migration for `referrals` table in `src/supabase/migrations/014_referrals.sql`
-- [ ] T105 Create RLS policies for `referrals` (own rows as referrer read, server-only write) in `src/supabase/migrations/015_rls_referrals.sql`
-- [ ] T106 [P] [US6] Implement referral data access in `src/lib/supabase/queries/referrals.ts`: `createReferral(referrerId, refereeId)`, `completeReferral(referralId)`, `getReferralStats(userId)`
-- [ ] T107 [US6] Implement referral reward logic in `src/lib/stripe/referrals.ts`: apply one free month credit to both referrer and referee via Stripe credit balance or coupon
-- [ ] T108 [US6] Add referral tracking to signup flow: detect `ref` query parameter in `src/app/(auth)/register/page.tsx`, store `referred_by` on user creation
-- [ ] T109 [US6] Add referral completion trigger to Stripe webhook handler in `src/lib/stripe/webhooks.ts`: when referee's subscription activates, complete referral and apply rewards
-- [ ] T110 [US6] Build referral page in `src/app/(platform)/referral/page.tsx` showing unique referral link, copy button, referral count, and reward status
+- [x] T104 Create Supabase migration for `referrals` table in `src/supabase/migrations/014_referrals.sql`
+- [x] T105 Create RLS policies for `referrals` (own rows as referrer read, server-only write) in `src/supabase/migrations/015_rls_referrals.sql`
+- [x] T106 [P] [US6] Implement referral data access in `src/lib/supabase/queries/referrals.ts`: `createReferral(referrerId, refereeId)`, `completeReferral(referralId)`, `getReferralStats(userId)`
+- [x] T107 [US6] Implement referral reward logic in `src/lib/stripe/referrals.ts`: apply one free month credit to both referrer and referee via Stripe credit balance or coupon
+- [x] T108 [US6] Add referral tracking to signup flow: detect `ref` query parameter in `src/app/(auth)/register/page.tsx`, store `referred_by` on user creation
+- [x] T109 [US6] Add referral completion trigger to Stripe webhook handler in `src/lib/stripe/webhooks.ts`: when referee's subscription activates, complete referral and apply rewards
+- [x] T110 [US6] Build referral page in `src/app/(platform)/referral/page.tsx` showing unique referral link, copy button, referral count, and reward status
 
 **Checkpoint**: Referral program is functional with tracked links, automatic rewards, and user-facing referral dashboard.
 
