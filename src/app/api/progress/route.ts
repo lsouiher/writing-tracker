@@ -1,9 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import { upsertLessonProgress } from '@/lib/supabase/queries/progress'
+import { checkApiRateLimit } from '@/lib/redis/api-rate-limit'
+import { NextRequest } from 'next/server'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'mutation')
+    if (rateLimited) return rateLimited
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 

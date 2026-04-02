@@ -79,7 +79,7 @@ export function QuizForm({ quizId, title, questions, passingScore }: QuizFormPro
   const allAnswered = Object.keys(answers).length === questions.length
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" role="form" aria-label={`Quiz : ${title}`}>
       <div>
         <h2 className="font-display text-xl mb-2">{title}</h2>
         <p className="text-muted text-sm">
@@ -89,6 +89,8 @@ export function QuizForm({ quizId, title, questions, passingScore }: QuizFormPro
 
       {result && (
         <div
+          role="alert"
+          aria-live="polite"
           className={`rounded-xl border p-6 text-center ${
             result.passed
               ? 'border-success/30 bg-success/5'
@@ -204,7 +206,7 @@ export function QuizForm({ quizId, title, questions, passingScore }: QuizFormPro
       </div>
 
       {error && (
-        <div className="bg-error/10 border border-error/20 rounded-lg p-4 text-error text-sm">
+        <div role="alert" className="bg-error/10 border border-error/20 rounded-lg p-4 text-error text-sm">
           {error}
         </div>
       )}

@@ -18,6 +18,7 @@ interface WeeklyDigestProps {
   topPosts: DigestPost[]
   newCourses: DigestCourse[]
   siteUrl: string
+  unsubscribeUrl: string
 }
 
 export function renderWeeklyDigest({
@@ -25,6 +26,7 @@ export function renderWeeklyDigest({
   topPosts,
   newCourses,
   siteUrl,
+  unsubscribeUrl,
 }: WeeklyDigestProps): string {
   const postsHtml = topPosts
     .map(
@@ -117,8 +119,8 @@ export function renderWeeklyDigest({
           <tr>
             <td style="padding: 24px 32px; background-color: #F7F5F2; border-top: 1px solid #D8D4CF;">
               <p style="color: #9B9590; font-size: 12px; margin: 0; text-align: center;">
-                Vous recevez cet email car vous êtes inscrit sur IAlgeria.
-                <a href="${siteUrl}/api/user/unsubscribe" style="color: #1B6B4A;">Se désabonner</a>
+                Vous recevez cet email car vous êtes inscrit sur IAlgeria.<br>
+                <a href="${unsubscribeUrl}" style="color: #1B6B4A;">Se désabonner en un clic</a>
               </p>
             </td>
           </tr>

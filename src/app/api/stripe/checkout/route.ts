@@ -2,11 +2,15 @@ import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe/client'
 import { getStripePriceId, getRegionFromCountry } from '@/lib/stripe/pricing'
 import { successResponse, errorResponse } from '@/lib/api/response'
+import { checkApiRateLimit } from '@/lib/redis/api-rate-limit'
 import { headers } from 'next/headers'
+import { NextRequest } from 'next/server'
 import type { SubscriptionPlan } from '@/types/domain'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'mutation')
+    if (rateLimited) return rateLimited
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 

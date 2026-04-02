@@ -13,17 +13,25 @@ interface SendEmailParams {
   to: string
   subject: string
   html: string
+  unsubscribeUrl?: string
 }
 
-export async function sendEmail({ to, subject, html }: SendEmailParams) {
+export async function sendEmail({ to, subject, html, unsubscribeUrl }: SendEmailParams) {
   const resend = getResend()
 
   try {
+    const headers: Record<string, string> = {}
+    if (unsubscribeUrl) {
+      headers['List-Unsubscribe'] = `<${unsubscribeUrl}>`
+      headers['List-Unsubscribe-Post'] = 'List-Unsubscribe=One-Click'
+    }
+
     const { data, error } = await resend.emails.send({
       from: 'IAlgeria <noreply@ialgeria.com>',
       to,
       subject,
       html,
+      headers,
     })
 
     if (error) {
@@ -36,4 +44,10 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
     console.error('Email send failed:', err)
     return null
   }
+}
+
+export function buildUnsubscribeUrl(userId: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ialgeria.com'
+  const token = Buffer.from(`${userId}:${Date.now()}`).toString('base64url')
+  return `${baseUrl}/api/user/unsubscribe?token=${token}&uid=${userId}`
 }

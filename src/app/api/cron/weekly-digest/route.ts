@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse } from '@/lib/api/response'
-import { sendEmail } from '@/lib/email/send'
+import { sendEmail, buildUnsubscribeUrl } from '@/lib/email/send'
 import { renderWeeklyDigest } from '@/lib/email/templates/weekly-digest'
 
 export async function GET(request: Request) {
@@ -45,11 +45,12 @@ export async function GET(request: Request) {
       return successResponse({ sent: 0, reason: 'No content for digest' })
     }
 
-    // Get all active users (with active or trialing subscriptions get priority, but send to all)
+    // Get all active users who haven't opted out
     const { data: users } = await supabase
       .from('users')
-      .select('email, full_name')
+      .select('id, email, full_name')
       .is('deleted_at', null)
+      .or('email_opt_out.is.null,email_opt_out.eq.false')
       .limit(1000)
 
     if (!users || users.length === 0) {
@@ -74,17 +75,20 @@ export async function GET(request: Request) {
     // Send emails in batches
     let sent = 0
     for (const user of users) {
+      const unsubscribeUrl = buildUnsubscribeUrl(user.id)
       const html = renderWeeklyDigest({
         userName: user.full_name,
         topPosts: digestPosts,
         newCourses: digestCourses,
         siteUrl,
+        unsubscribeUrl,
       })
 
       const result = await sendEmail({
         to: user.email,
         subject: 'Votre digest hebdomadaire — IAlgeria',
         html,
+        unsubscribeUrl,
       })
 
       if (result) sent++

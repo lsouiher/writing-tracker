@@ -33,12 +33,12 @@ export default async function CoursesPage({
   ]
 
   return (
-    <main className="max-w-6xl mx-auto px-6 py-16">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-16">
       <div className="mb-12">
         <p className="text-xs font-semibold uppercase tracking-widest text-accent mb-2">
           Formation
         </p>
-        <h1 className="font-display text-4xl mb-4">
+        <h1 className="font-display text-2xl sm:text-4xl mb-4">
           Nos cours en intelligence artificielle
         </h1>
         <p className="text-muted text-lg max-w-2xl">
@@ -48,12 +48,14 @@ export default async function CoursesPage({
       </div>
 
       {/* Level filter tabs */}
-      <div className="flex gap-2 mb-8">
+      <nav aria-label="Filtrer par niveau" className="flex flex-wrap gap-2 mb-8" role="tablist">
         {levels.map((l) => (
           <a
             key={l.value}
             href={l.value ? `/courses?level=${l.value}` : '/courses'}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            role="tab"
+            aria-selected={(level || '') === l.value}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               (level || '') === l.value
                 ? 'bg-primary text-white'
                 : 'bg-surface-alt text-muted hover:text-foreground'
@@ -62,7 +64,7 @@ export default async function CoursesPage({
             {l.label}
           </a>
         ))}
-      </div>
+      </nav>
 
       {/* Course grid */}
       {courses && courses.length > 0 ? (

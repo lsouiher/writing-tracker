@@ -3,12 +3,17 @@ import { successResponse, errorResponse } from '@/lib/api/response'
 import { getUserTier } from '@/lib/supabase/queries/subscriptions'
 import { getPostsByCourse, createPost, getUserVotesForPosts } from '@/lib/supabase/queries/community'
 import { moderateContent } from '@/lib/ai-tutor/moderation'
+import { checkApiRateLimit } from '@/lib/redis/api-rate-limit'
+import { NextRequest } from 'next/server'
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ courseSlug: string }> }
 ) {
   try {
+    const rateLimited = await checkApiRateLimit(request)
+    if (rateLimited) return rateLimited
+
     const { courseSlug } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -46,10 +51,13 @@ export async function GET(
 }
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ courseSlug: string }> }
 ) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'mutation')
+    if (rateLimited) return rateLimited
+
     const { courseSlug } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

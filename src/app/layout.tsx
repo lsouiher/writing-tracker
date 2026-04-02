@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DM_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
+import { LanguageToggle } from '@/components/ui/language-toggle'
 import './globals.css'
 
 const dmSans = DM_Sans({
@@ -51,7 +52,18 @@ export default function RootLayout({
       className={`${dmSans.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-body bg-background text-foreground">
-        {children}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:text-sm focus:font-medium"
+        >
+          Aller au contenu principal
+        </a>
+        <div className="fixed top-4 right-4 z-50">
+          <LanguageToggle />
+        </div>
+        <div id="main-content">
+          {children}
+        </div>
       </body>
     </html>
   )

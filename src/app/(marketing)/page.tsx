@@ -11,11 +11,11 @@ export default function LandingPage() {
   return (
     <main>
       {/* Navigation */}
-      <nav className="bg-surface border-b border-border px-6 lg:px-12 py-4 flex items-center justify-between">
+      <nav className="bg-surface border-b border-border px-4 sm:px-6 lg:px-12 py-4 flex items-center justify-between">
         <Link href="/" className="font-display text-2xl text-primary">
           IAlgeria
         </Link>
-        <div className="flex items-center gap-8">
+        <div className="hidden sm:flex items-center gap-8">
           <Link href="/courses" className="text-sm text-muted hover:text-foreground">
             Cours
           </Link>
@@ -26,15 +26,23 @@ export default function LandingPage() {
             <Button size="sm">Commencer gratuitement</Button>
           </Link>
         </div>
+        <div className="flex sm:hidden items-center gap-3">
+          <Link href="/courses" className="text-sm text-muted hover:text-foreground">
+            Cours
+          </Link>
+          <Link href="/login">
+            <Button size="sm">Commencer</Button>
+          </Link>
+        </div>
       </nav>
 
       {/* Zellige accent */}
       <div className="w-full h-1 bg-[repeating-linear-gradient(90deg,var(--primary)_0px,var(--primary)_8px,transparent_8px,transparent_12px,var(--accent)_12px,var(--accent)_20px,transparent_20px,transparent_24px)] opacity-60" />
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-6 py-20 lg:py-28 grid lg:grid-cols-2 gap-16 items-center">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-20 lg:py-28 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
         <div>
-          <h1 className="font-display text-5xl lg:text-6xl leading-tight mb-6">
+          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl leading-tight mb-6">
             Apprenez l&apos;IA{' '}
             <em className="text-primary">en francais</em>
           </h1>
@@ -43,19 +51,19 @@ export default function LandingPage() {
             artificielle concue pour les professionnels francophones. Cours
             video gratuits, laboratoires interactifs, tuteur IA personnel.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <Link href="/courses">
-              <Button variant="accent" size="lg">
+              <Button variant="accent" size="lg" className="w-full sm:w-auto">
                 Commencer gratuitement
               </Button>
             </Link>
             <Link href="/courses">
-              <Button variant="ghost" size="lg">
+              <Button variant="ghost" size="lg" className="w-full sm:w-auto">
                 Voir les cours
               </Button>
             </Link>
           </div>
-          <div className="flex gap-12 mt-12">
+          <div className="flex gap-8 sm:gap-12 mt-8 sm:mt-12">
             <div>
               <p className="font-display text-3xl text-primary">12</p>
               <p className="text-xs text-muted">Cours structures</p>

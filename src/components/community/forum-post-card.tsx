@@ -43,13 +43,15 @@ export function ForumPostCard({
               if (isPro) onVote(id)
             }}
             disabled={!isPro}
-            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+            className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
               userHasVoted
                 ? 'bg-primary text-white'
                 : isPro
                   ? 'bg-surface-alt text-muted hover:bg-primary/10 hover:text-primary'
                   : 'bg-surface-alt text-text-light cursor-not-allowed'
             }`}
+            aria-label={userHasVoted ? `Retirer le vote (${upvoteCount} votes)` : `Voter pour ce post (${upvoteCount} votes)`}
+            aria-pressed={userHasVoted}
             title={isPro ? 'Voter' : 'Réservé aux abonnés Pro'}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

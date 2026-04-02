@@ -2,12 +2,17 @@ import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import { getUserTier } from '@/lib/supabase/queries/subscriptions'
 import { submitQuizResult } from '@/lib/supabase/queries/quizzes'
+import { checkApiRateLimit } from '@/lib/redis/api-rate-limit'
+import { NextRequest } from 'next/server'
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ quizId: string }> }
 ) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'mutation')
+    if (rateLimited) return rateLimited
+
     const { quizId } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

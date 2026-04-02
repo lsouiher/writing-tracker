@@ -3,6 +3,8 @@ import { successResponse, errorResponse } from '@/lib/api/response'
 import { getUserTier } from '@/lib/supabase/queries/subscriptions'
 import { getLabByModule } from '@/lib/supabase/queries/labs'
 import { saveLabSubmission } from '@/lib/supabase/queries/labs'
+import { checkApiRateLimit } from '@/lib/redis/api-rate-limit'
+import { NextRequest } from 'next/server'
 
 const JUDGE0_API_URL = process.env.JUDGE0_API_URL || 'https://judge0-ce.p.rapidapi.com'
 const JUDGE0_API_KEY = process.env.JUDGE0_API_KEY || ''
@@ -14,10 +16,13 @@ const LANGUAGE_IDS: Record<string, number> = {
 }
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ labId: string }> }
 ) {
   try {
+    const rateLimited = await checkApiRateLimit(request, 'mutation')
+    if (rateLimited) return rateLimited
+
     const { labId } = await params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

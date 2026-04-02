@@ -259,14 +259,14 @@
 
 ### Implementation for AI Tutor
 
-- [ ] T119 Create Supabase migration for `ai_tutor_logs` table in `src/supabase/migrations/016_ai_tutor.sql`
-- [ ] T120 Create RLS policies for `ai_tutor_logs` (own rows read, server-only write) in `src/supabase/migrations/017_rls_ai_tutor.sql`
-- [ ] T121 [P] [US2] Implement rate limiting in `src/lib/redis/rate-limit.ts` using @upstash/ratelimit: free users 5/day, Pro users 30/hour
-- [ ] T122 [P] [US2] Implement Claude API client in `src/lib/ai-tutor/client.ts` with streaming support using @anthropic-ai/sdk
-- [ ] T123 [P] [US2] Implement AI tutor system prompt in `src/lib/ai-tutor/prompts.ts` with French-only constraint, lesson transcript injection, off-topic detection per contracts/ai-tutor-contract.md
-- [ ] T124 [US2] Implement `POST /api/ai-tutor` Route Handler in `src/app/api/ai-tutor/route.ts` with auth check, tier-based rate limiting, transcript context loading, Claude streaming SSE, off-topic detection, and logging to `ai_tutor_logs`
-- [ ] T125 [P] [US2] Create AiTutorChat client component in `src/components/ai-tutor/chat-sidebar.tsx` with message list, input field, streaming response display, rate limit indicator
-- [ ] T126 [US2] Integrate AI tutor sidebar into lesson page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx` as collapsible panel (Pro badge, paywall for free users)
+- [x] T119 Create Supabase migration for `ai_tutor_logs` table in `src/supabase/migrations/016_ai_tutor.sql`
+- [x] T120 Create RLS policies for `ai_tutor_logs` (own rows read, server-only write) in `src/supabase/migrations/017_rls_ai_tutor.sql`
+- [x] T121 [P] [US2] Implement rate limiting in `src/lib/redis/rate-limit.ts` using @upstash/ratelimit: free users 5/day, Pro users 30/hour
+- [x] T122 [P] [US2] Implement Claude API client in `src/lib/ai-tutor/client.ts` with streaming support using @anthropic-ai/sdk
+- [x] T123 [P] [US2] Implement AI tutor system prompt in `src/lib/ai-tutor/prompts.ts` with French-only constraint, lesson transcript injection, off-topic detection per contracts/ai-tutor-contract.md
+- [x] T124 [US2] Implement `POST /api/ai-tutor` Route Handler in `src/app/api/ai-tutor/route.ts` with auth check, tier-based rate limiting, transcript context loading, Claude streaming SSE, off-topic detection, and logging to `ai_tutor_logs`
+- [x] T125 [P] [US2] Create AiTutorChat client component in `src/components/ai-tutor/chat-sidebar.tsx` with message list, input field, streaming response display, rate limit indicator
+- [x] T126 [US2] Integrate AI tutor sidebar into lesson page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/page.tsx` as collapsible panel (Pro badge, paywall for free users)
 
 **Checkpoint**: AI tutor is functional with French responses, topic constraints, rate limiting, and streaming UX.
 
@@ -276,16 +276,16 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T128 [P] Add rate limiting middleware for all public API endpoints in `src/lib/redis/api-rate-limit.ts` using Upstash Redis
-- [ ] T129 [P] Implement French/English language toggle in `src/components/ui/language-toggle.tsx` and integrate into app layout
-- [ ] T130 [P] Add unsubscribe one-click link to all marketing emails per GDPR in `src/lib/email/templates/`
-- [ ] T131 Implement GDPR data export endpoint in `src/app/api/user/export/route.ts` returning user's personal data as JSON
-- [ ] T132 Implement GDPR account deletion endpoint in `src/app/api/user/delete/route.ts` performing soft delete per Constitution IV
-- [ ] T133 [P] Add responsive design and mobile optimization to all pages (course catalog, lesson page, dashboard)
-- [ ] T134 [P] Add keyboard navigation and ARIA labels to all interactive components per Constitution VII accessibility requirements
-- [ ] T135 [P] Create `robots.txt` and `sitemap.xml` generation in `src/app/robots.ts` and `src/app/sitemap.ts` for SEO
-- [ ] T136 Run quickstart.md validation: verify dev setup from scratch using the documented steps
-- [ ] T137 Security audit: verify all secrets are env-only, user content is sanitized before storage and escaped before render, signed URLs are enforced, RLS is complete
+- [x] T128 [P] Add rate limiting middleware for all public API endpoints in `src/lib/redis/api-rate-limit.ts` using Upstash Redis
+- [x] T129 [P] Implement French/English language toggle in `src/components/ui/language-toggle.tsx` and integrate into app layout
+- [x] T130 [P] Add unsubscribe one-click link to all marketing emails per GDPR in `src/lib/email/templates/`
+- [x] T131 Implement GDPR data export endpoint in `src/app/api/user/export/route.ts` returning user's personal data as JSON
+- [x] T132 Implement GDPR account deletion endpoint in `src/app/api/user/delete/route.ts` performing soft delete per Constitution IV
+- [x] T133 [P] Add responsive design and mobile optimization to all pages (course catalog, lesson page, dashboard)
+- [x] T134 [P] Add keyboard navigation and ARIA labels to all interactive components per Constitution VII accessibility requirements
+- [x] T135 [P] Create `robots.txt` and `sitemap.xml` generation in `src/app/robots.ts` and `src/app/sitemap.ts` for SEO
+- [x] T136 Run quickstart.md validation: verify dev setup from scratch using the documented steps
+- [x] T137 Security audit: verify all secrets are env-only, user content is sanitized before storage and escaped before render, signed URLs are enforced, RLS is complete
 
 ---
 
