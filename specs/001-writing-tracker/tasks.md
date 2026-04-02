@@ -152,13 +152,13 @@
 
 **Purpose**: Mobile optimization, edge cases, accessibility, performance
 
-- [ ] T038 [P] Mobile spacing and touch-target sizing (≥ 44px tap targets) across all components
-- [ ] T039 [P] Hover states and focus styles for all interactive elements (day buttons, pips, phase cards, grid cells)
-- [ ] T040 [P] Empty states: Log view with no data, Skills with all ratings at 0, This Week with no days marked
-- [ ] T041 [P] Accessibility audit: semantic HTML, keyboard navigation for all interactive elements, ARIA labels, color contrast verification
-- [ ] T042 [P] Performance check: verify < 3s load on throttled connection, < 2s day-log interaction
-- [ ] T043 Narrow viewport handling: 52-cell grid readable on 360px screens (horizontal scroll if needed) in `components/week-grid.tsx`
-- [ ] T044 Run final checklist from plan-promt.md §"Final Checklist" against deployed app
+- [x] T038 [P] Mobile spacing and touch-target sizing (≥ 44px tap targets) across all components
+- [x] T039 [P] Hover states and focus styles for all interactive elements (day buttons, pips, phase cards, grid cells)
+- [x] T040 [P] Empty states: Log view with no data, Skills with all ratings at 0, This Week with no days marked
+- [x] T041 [P] Accessibility audit: semantic HTML, keyboard navigation for all interactive elements, ARIA labels, color contrast verification
+- [x] T042 [P] Performance check: verify < 3s load on throttled connection, < 2s day-log interaction
+- [x] T043 Narrow viewport handling: 52-cell grid readable on 360px screens (horizontal scroll if needed) in `components/week-grid.tsx`
+- [x] T044 Run final checklist from plan-promt.md §"Final Checklist" against deployed app
 
 ---
 

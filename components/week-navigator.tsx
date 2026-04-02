@@ -14,7 +14,7 @@ export function WeekNavigator({ weekNumber }: { weekNumber: number }) {
       <button
         onClick={() => goTo(weekNumber - 1)}
         disabled={weekNumber <= 1}
-        className="rounded-lg px-3 py-2 text-sm font-medium text-ink-light transition-colors hover:bg-accent-light/40 disabled:opacity-30"
+        className="min-h-[44px] min-w-[44px] rounded-lg px-3 py-2 text-sm font-medium text-ink-light transition-colors hover:bg-accent-light/40 disabled:opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         aria-label="Previous week"
       >
         ← Prev
@@ -23,7 +23,7 @@ export function WeekNavigator({ weekNumber }: { weekNumber: number }) {
       <button
         onClick={() => goTo(weekNumber + 1)}
         disabled={weekNumber >= 52}
-        className="rounded-lg px-3 py-2 text-sm font-medium text-ink-light transition-colors hover:bg-accent-light/40 disabled:opacity-30"
+        className="min-h-[44px] min-w-[44px] rounded-lg px-3 py-2 text-sm font-medium text-ink-light transition-colors hover:bg-accent-light/40 disabled:opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         aria-label="Next week"
       >
         Next →

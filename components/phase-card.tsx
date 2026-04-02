@@ -35,7 +35,7 @@ export function PhaseCard({
       <button
         onClick={handleClick}
         disabled={isPending}
-        className="flex w-full items-center justify-between p-4 text-left"
+        className="flex w-full items-center justify-between p-4 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent rounded-lg"
         aria-expanded={initialExpanded}
       >
         <div>

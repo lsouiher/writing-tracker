@@ -41,9 +41,13 @@ export default function LogPage() {
         </div>
       </section>
 
-      {lastFiveNotes.length > 0 && (
-        <section>
-          <h2 className="mb-3 text-lg font-semibold">Recent notes</h2>
+      <section>
+        <h2 className="mb-3 text-lg font-semibold">Recent notes</h2>
+        {lastFiveNotes.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-accent-light p-4 text-center text-sm text-ink-light">
+            No notes yet. Write your first reflection on the This Week tab.
+          </p>
+        ) : (
           <div className="space-y-2">
             {lastFiveNotes.map(({ week, notes }) => (
               <div
@@ -57,8 +61,8 @@ export default function LogPage() {
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </div>
   );
 }

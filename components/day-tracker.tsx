@@ -29,7 +29,7 @@ export function DayTracker({
             key={index}
             onClick={() => handleToggle(index)}
             disabled={isPending}
-            className={`flex h-11 w-11 items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+            className={`flex h-11 w-11 items-center justify-center rounded-lg text-sm font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-paper ${
               isMarked
                 ? 'bg-accent text-paper'
                 : 'bg-accent-light/40 text-ink-light hover:bg-accent-light'

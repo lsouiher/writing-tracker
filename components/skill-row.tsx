@@ -37,18 +37,20 @@ export function SkillRow({
         <div className="text-sm font-medium">{name}</div>
         <div className="text-xs text-ink-light">{RATING_LABELS[rating]}</div>
       </div>
-      <div className="flex gap-1.5">
+      <div className="flex gap-1.5" role="radiogroup" aria-label={`${name} rating`}>
         {[1, 2, 3, 4, 5].map((pip) => (
           <button
             key={pip}
             onClick={() => handlePipClick(pip)}
             disabled={isPending}
-            className={`h-7 w-7 rounded transition-colors ${
+            className={`h-9 w-9 rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-1 focus-visible:ring-offset-paper ${
               pip <= rating
                 ? 'bg-accent'
                 : 'bg-accent-light/40 hover:bg-accent-light'
             }`}
-            aria-label={`${name}: set to ${RATING_LABELS[pip]}`}
+            role="radio"
+            aria-checked={pip <= rating}
+            aria-label={`${RATING_LABELS[pip]}`}
           />
         ))}
       </div>

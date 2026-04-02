@@ -23,7 +23,7 @@ export function TabNav() {
             key={tab.slug}
             href={tab.href}
             onClick={() => updateLastTab(tab.slug)}
-            className={`flex-1 py-3 text-center text-sm font-medium transition-colors ${
+            className={`flex-1 py-3 text-center text-sm font-medium transition-colors focus:outline-none focus-visible:bg-accent-light/30 ${
               isActive
                 ? 'border-b-2 border-accent text-accent'
                 : 'text-ink-light hover:text-ink'

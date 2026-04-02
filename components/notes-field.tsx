@@ -48,7 +48,8 @@ export function NotesField({
       onChange={handleChange}
       onBlur={handleBlur}
       placeholder="What did you write this week? What felt hard or easy? Any feedback from your friend?"
-      className="w-full rounded-lg border border-accent-light bg-paper p-3 text-sm leading-relaxed text-ink placeholder:text-ink-light/60 focus:border-accent focus:outline-none"
+      aria-label="Weekly notes"
+      className="w-full rounded-lg border border-accent-light bg-paper p-3 text-sm leading-relaxed text-ink placeholder:text-ink-light/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
       rows={5}
     />
   );
