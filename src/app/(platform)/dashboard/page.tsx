@@ -48,19 +48,45 @@ export default async function DashboardPage() {
         {enrollments.length > 0 ? (
           <div className="space-y-4">
             {enrollments.map((e: Record<string, unknown>) => (
-              <Link
+              <div
                 key={e.course_slug as string}
-                href={`/courses/${e.course_slug}`}
-                className="block bg-surface rounded-xl border border-border p-5 hover:border-primary/30 transition-colors"
+                className="bg-surface rounded-xl border border-border p-5"
               >
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-medium">{e.course_title as string}</h3>
-                  <span className="text-sm text-primary font-medium">
-                    {e.progress_percent as number}%
-                  </span>
-                </div>
-                <ProgressBar value={e.progress_percent as number} />
-              </Link>
+                <Link
+                  href={`/courses/${e.course_slug}`}
+                  className="block hover:text-primary transition-colors"
+                >
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-medium">{e.course_title as string}</h3>
+                    <span className="text-sm text-primary font-medium">
+                      {e.progress_percent as number}%
+                    </span>
+                  </div>
+                  <ProgressBar value={e.progress_percent as number} />
+                </Link>
+                {(e.modules as Record<string, unknown>[])?.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    {(e.modules as Record<string, unknown>[]).map((mod, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-xs text-muted">
+                        <span>{mod.title as string}</span>
+                        <div className="flex items-center gap-3">
+                          <span>{mod.lessons_completed as number}/{mod.lessons_total as number} leçons</span>
+                          {mod.quiz_passed !== null && (
+                            <span className={mod.quiz_passed ? 'text-success' : 'text-text-light'}>
+                              Quiz {mod.quiz_passed ? '✓' : '—'}
+                            </span>
+                          )}
+                          {mod.lab_passed !== null && (
+                            <span className={mod.lab_passed ? 'text-success' : 'text-text-light'}>
+                              Lab {mod.lab_passed ? '✓' : '—'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         ) : (

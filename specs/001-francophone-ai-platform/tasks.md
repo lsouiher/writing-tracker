@@ -129,31 +129,31 @@
 
 ### Implementation for User Story 3
 
-- [ ] T062 Create Supabase migration for `quizzes`, `quiz_results`, `labs`, `lab_submissions`, `certificates` tables in `src/supabase/migrations/008_assessments_certs.sql`
-- [ ] T063 Create RLS policies: quizzes/labs (authenticated read, admin write), quiz_results/lab_submissions (Pro own rows), certificates (own rows + public verify) in `src/supabase/migrations/009_rls_assessments.sql`
-- [ ] T064 [P] [US3] Implement quiz data access in `src/lib/supabase/queries/quizzes.ts`: `getQuizByModule(moduleId)`, `submitQuizResult(userId, quizId, answers)`, `getQuizResults(userId, courseId)`
-- [ ] T065 [P] [US3] Implement lab data access in `src/lib/supabase/queries/labs.ts`: `getLabByModule(moduleId)`, `saveLabSubmission(userId, labId, code, result)`, `getLabSubmissions(userId, courseId)`
-- [ ] T066 [P] [US3] Implement certificate data access in `src/lib/supabase/queries/certificates.ts`: `checkCertificateEligibility(userId, courseId)`, `createCertificate(userId, courseId)`, `getCertificateByCode(code)`
-- [ ] T067 [US3] Implement `POST /api/quizzes/[quizId]/submit` Route Handler in `src/app/api/quizzes/[quizId]/submit/route.ts` with auto-grading, 70% pass threshold, French feedback per contracts/api-routes.md
-- [ ] T068 [US3] Implement `POST /api/labs/[labId]/submit` Route Handler in `src/app/api/labs/[labId]/submit/route.ts` calling Judge0 API for sandboxed execution (Python/JS/R, 10s timeout, 256MB limit)
-- [ ] T069 [US3] Implement certificate PDF generation in `src/lib/certificates/generate.ts` using @react-pdf/renderer with branded layout, user name, course title, date, verification code
-- [ ] T070 [US3] Implement `POST /api/certificates/generate` Route Handler in `src/app/api/certificates/route.ts` that checks eligibility, generates PDF, uploads to Supabase Storage, creates DB record
-- [ ] T071 [US3] Implement `GET /api/verify/[code]` Route Handler in `src/app/api/verify/[code]/route.ts` returning certificate holder name, course, and date (public, no auth)
-- [ ] T072 [P] [US3] Create MonacoLab client component in `src/components/lab/monaco-lab.tsx` with @monaco-editor/react, dynamic import (no SSR), language selector, starter code loading, run button
-- [ ] T073 [P] [US3] Create QuizForm client component in `src/components/course/quiz-form.tsx` with MCQ + short answer inputs, instant feedback display in French, retry support
-- [ ] T074 [US3] Build lab exercise page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/lab/page.tsx` with Monaco editor, test case display, submission results (Pro-only with paywall)
-- [ ] T075 [US3] Build quiz page in `src/app/(platform)/courses/[courseSlug]/modules/[moduleSlug]/quiz/page.tsx` with quiz form, score display, pass/fail feedback (Pro-only with paywall)
-- [ ] T076 [US3] Build certificate verification page (public) in `src/app/verify/[code]/page.tsx` displaying holder name, course title, and completion date
-- [ ] T077 [US3] Build certificates list page in `src/app/(platform)/certificates/page.tsx` showing earned certificates with download links
-- [ ] T078 [US3] Add certificate download and lab/quiz completion status to dashboard in `src/app/(platform)/dashboard/page.tsx`
-- [ ] T138 Create Supabase migration for `capstone_submissions` and `capstone_reviews` tables in `src/supabase/migrations/008b_capstones.sql`
-- [ ] T139 Create RLS policies for capstone_submissions (Pro own rows + course peers if peer_review_open) and capstone_reviews (Pro on open submissions) in `src/supabase/migrations/009b_rls_capstones.sql`
-- [ ] T140 [P] [US3] Implement capstone data access in `src/lib/supabase/queries/capstones.ts`: `submitCapstone(userId, courseId, data)`, `getCapstone(userId, courseId)`, `getOpenCapstones(courseId)`, `submitReview(submissionId, reviewerId, data)`
-- [ ] T141 [US3] Implement capstone AI grading Route Handler in `src/app/api/capstones/[submissionId]/grade/route.ts` using Claude API with course rubric context, French feedback, 70% pass threshold
-- [ ] T142 [US3] Implement `POST /api/capstones` Route Handler in `src/app/api/capstones/route.ts` for capstone submission (Pro only)
-- [ ] T143 [US3] Implement `POST /api/capstones/[submissionId]/review` Route Handler in `src/app/api/capstones/[submissionId]/review/route.ts` for peer review submission (Pro only, on open submissions)
-- [ ] T144 [US3] Build capstone submission page in `src/app/(platform)/courses/[courseSlug]/capstone/page.tsx` with project description form, code/repo submission, AI grading status, peer reviews display
-- [ ] T145 [US3] Update certificate eligibility check in `src/lib/supabase/queries/certificates.ts` to require capstone approval (status='approved') in addition to lessons, labs, and quizzes
+- [x] T062 Create Supabase migration for `quizzes`, `quiz_results`, `labs`, `lab_submissions`, `certificates` tables in `src/supabase/migrations/008_assessments_certs.sql`
+- [x] T063 Create RLS policies: quizzes/labs (authenticated read, admin write), quiz_results/lab_submissions (Pro own rows), certificates (own rows + public verify) in `src/supabase/migrations/009_rls_assessments.sql`
+- [x] T064 [P] [US3] Implement quiz data access in `src/lib/supabase/queries/quizzes.ts`: `getQuizByModule(moduleId)`, `submitQuizResult(userId, quizId, answers)`, `getQuizResults(userId, courseId)`
+- [x] T065 [P] [US3] Implement lab data access in `src/lib/supabase/queries/labs.ts`: `getLabByModule(moduleId)`, `saveLabSubmission(userId, labId, code, result)`, `getLabSubmissions(userId, courseId)`
+- [x] T066 [P] [US3] Implement certificate data access in `src/lib/supabase/queries/certificates.ts`: `checkCertificateEligibility(userId, courseId)`, `createCertificate(userId, courseId)`, `getCertificateByCode(code)`
+- [x] T067 [US3] Implement `POST /api/quizzes/[quizId]/submit` Route Handler in `src/app/api/quizzes/[quizId]/submit/route.ts` with auto-grading, 70% pass threshold, French feedback per contracts/api-routes.md
+- [x] T068 [US3] Implement `POST /api/labs/[labId]/submit` Route Handler in `src/app/api/labs/[labId]/submit/route.ts` calling Judge0 API for sandboxed execution (Python/JS/R, 10s timeout, 256MB limit)
+- [x] T069 [US3] Implement certificate PDF generation in `src/lib/certificates/generate.ts` using @react-pdf/renderer with branded layout, user name, course title, date, verification code
+- [x] T070 [US3] Implement `POST /api/certificates/generate` Route Handler in `src/app/api/certificates/route.ts` that checks eligibility, generates PDF, uploads to Supabase Storage, creates DB record
+- [x] T071 [US3] Implement `GET /api/verify/[code]` Route Handler in `src/app/api/verify/[code]/route.ts` returning certificate holder name, course, and date (public, no auth)
+- [x] T072 [P] [US3] Create MonacoLab client component in `src/components/lab/monaco-lab.tsx` with @monaco-editor/react, dynamic import (no SSR), language selector, starter code loading, run button
+- [x] T073 [P] [US3] Create QuizForm client component in `src/components/course/quiz-form.tsx` with MCQ + short answer inputs, instant feedback display in French, retry support
+- [x] T074 [US3] Build lab exercise page in `src/app/(platform)/courses/[courseSlug]/[lessonSlug]/lab/page.tsx` with Monaco editor, test case display, submission results (Pro-only with paywall)
+- [x] T075 [US3] Build quiz page in `src/app/(platform)/courses/[courseSlug]/modules/[moduleSlug]/quiz/page.tsx` with quiz form, score display, pass/fail feedback (Pro-only with paywall)
+- [x] T076 [US3] Build certificate verification page (public) in `src/app/verify/[code]/page.tsx` displaying holder name, course title, and completion date
+- [x] T077 [US3] Build certificates list page in `src/app/(platform)/certificates/page.tsx` showing earned certificates with download links
+- [x] T078 [US3] Add certificate download and lab/quiz completion status to dashboard in `src/app/(platform)/dashboard/page.tsx`
+- [x] T138 Create Supabase migration for `capstone_submissions` and `capstone_reviews` tables in `src/supabase/migrations/008b_capstones.sql`
+- [x] T139 Create RLS policies for capstone_submissions (Pro own rows + course peers if peer_review_open) and capstone_reviews (Pro on open submissions) in `src/supabase/migrations/009b_rls_capstones.sql`
+- [x] T140 [P] [US3] Implement capstone data access in `src/lib/supabase/queries/capstones.ts`: `submitCapstone(userId, courseId, data)`, `getCapstone(userId, courseId)`, `getOpenCapstones(courseId)`, `submitReview(submissionId, reviewerId, data)`
+- [x] T141 [US3] Implement capstone AI grading Route Handler in `src/app/api/capstones/[submissionId]/grade/route.ts` using Claude API with course rubric context, French feedback, 70% pass threshold
+- [x] T142 [US3] Implement `POST /api/capstones` Route Handler in `src/app/api/capstones/route.ts` for capstone submission (Pro only)
+- [x] T143 [US3] Implement `POST /api/capstones/[submissionId]/review` Route Handler in `src/app/api/capstones/[submissionId]/review/route.ts` for peer review submission (Pro only, on open submissions)
+- [x] T144 [US3] Build capstone submission page in `src/app/(platform)/courses/[courseSlug]/capstone/page.tsx` with project description form, code/repo submission, AI grading status, peer reviews display
+- [x] T145 [US3] Update certificate eligibility check in `src/lib/supabase/queries/certificates.ts` to require capstone approval (status='approved') in addition to lessons, labs, and quizzes
 
 **Checkpoint**: Pro users can complete full courses with labs, quizzes, capstone projects, and earn verifiable certificates.
 

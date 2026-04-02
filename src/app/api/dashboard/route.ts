@@ -52,25 +52,78 @@ export async function GET() {
       .select('verification_code, pdf_url, issued_at, courses:course_id(title)')
       .eq('user_id', user.id)
 
-    // Compute progress percentages
+    // Get quiz results and lab submissions for completion status
+    const { data: quizResults } = await supabase
+      .from('quiz_results')
+      .select('quiz_id, passed')
+      .eq('user_id', user.id)
+      .eq('passed', true)
+
+    const passedQuizIds = new Set((quizResults || []).map((r: { quiz_id: string }) => r.quiz_id))
+
+    const { data: labSubmissions } = await supabase
+      .from('lab_submissions')
+      .select('lab_id, passed')
+      .eq('user_id', user.id)
+      .eq('passed', true)
+
+    const passedLabIds = new Set((labSubmissions || []).map((s: { lab_id: string }) => s.lab_id))
+
+    // Get all quizzes and labs keyed by module
+    const allModuleIds = (enrollments || []).flatMap((e: Record<string, unknown>) => {
+      const course = e.courses as Record<string, unknown>
+      return ((course?.modules || []) as { id: string }[]).map((m) => m.id)
+    })
+
+    const { data: allQuizzes } = allModuleIds.length > 0
+      ? await supabase.from('quizzes').select('id, module_id').in('module_id', allModuleIds)
+      : { data: [] }
+
+    const { data: allLabs } = allModuleIds.length > 0
+      ? await supabase.from('labs').select('id, module_id').in('module_id', allModuleIds)
+      : { data: [] }
+
+    const quizByModule = new Map<string, string>()
+    for (const q of allQuizzes || []) quizByModule.set(q.module_id, q.id)
+
+    const labByModule = new Map<string, string>()
+    for (const l of allLabs || []) labByModule.set(l.module_id, l.id)
+
+    // Compute progress percentages with quiz/lab status
     const enrichedEnrollments = (enrollments || []).map((e: Record<string, unknown>) => {
       const course = e.courses as Record<string, unknown>
       const modules = (course?.modules || []) as Record<string, unknown>[]
       let totalLessons = 0
       let completedLessons = 0
 
-      for (const mod of modules) {
+      const moduleDetails = modules.map((mod) => {
         const lessons = (mod.lessons || []) as Record<string, unknown>[]
+        let modCompleted = 0
         for (const lesson of lessons) {
           totalLessons++
-          if (progressMap.get(lesson.id as string)) completedLessons++
+          if (progressMap.get(lesson.id as string)) {
+            completedLessons++
+            modCompleted++
+          }
         }
-      }
+
+        const quizId = quizByModule.get(mod.id as string)
+        const labId = labByModule.get(mod.id as string)
+
+        return {
+          title: mod.title,
+          lessons_completed: modCompleted,
+          lessons_total: lessons.length,
+          quiz_passed: quizId ? passedQuizIds.has(quizId) : null,
+          lab_passed: labId ? passedLabIds.has(labId) : null,
+        }
+      })
 
       return {
         course_slug: course?.slug,
         course_title: course?.title,
         progress_percent: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
+        modules: moduleDetails,
       }
     })
 
