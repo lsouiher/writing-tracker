@@ -29,7 +29,23 @@ create table public.coupons (
   code text not null unique,
   discount_percent integer not null check (discount_percent between 1 and 100),
   max_uses integer not null,
-  current_uses integer not null default 0,
+  current_uses integer not null default 0 check (current_uses >= 0),
   expires_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- Atomic coupon usage increment (prevents race condition)
+create or replace function increment_coupon_usage(p_coupon_id uuid)
+returns boolean as $$
+declare
+  updated boolean;
+begin
+  update public.coupons
+  set current_uses = current_uses + 1
+  where id = p_coupon_id
+    and current_uses < max_uses
+    and (expires_at is null or expires_at > now());
+  get diagnostics updated = row_count;
+  return updated > 0;
+end;
+$$ language plpgsql security definer set search_path = public;

@@ -7,7 +7,8 @@
       "Bash(grep -rn \"speckit\\\\.\" /mnt/c/Users/leoso/OneDrive/Desktop/Projects/IAlgeria/.claude/skills/speckit-*/SKILL.md)",
       "Bash(echo \"===EXIT=$?===\")",
       "Bash(.specify/scripts/bash/create-new-feature.sh Plateforme Francophone d'Apprentissage IA — free course videos + paid Pro tier with labs, AI tutor, certificates, community, PPP pricing for Maghreb:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Skill(review)"
     ]
   }
 }

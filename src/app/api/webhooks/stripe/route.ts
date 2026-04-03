@@ -1,8 +1,10 @@
 import { getStripe } from '@/lib/stripe/client'
 import {
   handleCheckoutCompleted,
+  handleTeamCheckoutCompleted,
   handleSubscriptionUpdated,
   handleSubscriptionDeleted,
+  handleTeamSubscriptionDeleted,
   handleInvoicePaymentFailed,
   handleInvoicePaid,
 } from '@/lib/stripe/webhooks'
@@ -27,23 +29,31 @@ export async function POST(request: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET!
     )
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Invalid signature'
-    console.error('Webhook signature verification failed:', message)
-    return NextResponse.json({ error: message }, { status: 400 })
+    console.error('Webhook signature verification failed:', err)
+    return NextResponse.json({ error: 'Webhook verification failed' }, { status: 400 })
   }
 
   try {
     switch (event.type) {
-      case 'checkout.session.completed':
-        await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session)
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session
+        if (session.metadata?.type === 'team') {
+          await handleTeamCheckoutCompleted(session)
+        } else {
+          await handleCheckoutCompleted(session)
+        }
         break
+      }
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(event.data.object as Stripe.Subscription)
         break
-      case 'customer.subscription.deleted':
-        await handleSubscriptionDeleted(event.data.object as Stripe.Subscription)
+      case 'customer.subscription.deleted': {
+        const subscription = event.data.object as Stripe.Subscription
+        await handleSubscriptionDeleted(subscription)
+        await handleTeamSubscriptionDeleted(subscription)
         break
+      }
       case 'invoice.payment_failed':
         await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice)
         break
@@ -55,8 +65,8 @@ export async function POST(request: NextRequest) {
     }
   } catch (err) {
     console.error(`Webhook handler error for ${event.type}:`, err)
-    // Return 200 to prevent Stripe from retrying (we log the error for investigation)
-    return NextResponse.json({ received: true, error: 'Handler failed' }, { status: 200 })
+    // Return 500 so Stripe retries delivery for transient failures
+    return NextResponse.json({ error: 'Handler failed' }, { status: 500 })
   }
 
   return NextResponse.json({ received: true })

@@ -1,17 +1,26 @@
-import { createClient } from '@/lib/supabase/server'
+import { getServiceClient } from '@/lib/supabase/service'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import { sendEmail, buildUnsubscribeUrl } from '@/lib/email/send'
+import { timingSafeEqual } from 'crypto'
 import { renderWeeklyDigest } from '@/lib/email/templates/weekly-digest'
 
 export async function GET(request: Request) {
   try {
     // Verify cron secret (Vercel Cron sends this header)
     const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    const expected = `Bearer ${process.env.CRON_SECRET}`
+    if (!authHeader || !process.env.CRON_SECRET) {
+      return errorResponse('UNAUTHORIZED', 'Invalid cron secret', 401)
+    }
+    try {
+      if (!timingSafeEqual(Buffer.from(authHeader), Buffer.from(expected))) {
+        return errorResponse('UNAUTHORIZED', 'Invalid cron secret', 401)
+      }
+    } catch {
       return errorResponse('UNAUTHORIZED', 'Invalid cron secret', 401)
     }
 
-    const supabase = await createClient()
+    const supabase = getServiceClient()
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ialgeria.com'
 
     // Get top posts from the last 7 days
@@ -72,26 +81,30 @@ export async function GET(request: Request) {
       url: `${siteUrl}/courses/${course.slug}`,
     }))
 
-    // Send emails in batches
+    // Send emails in batches of 25 to avoid timeout
     let sent = 0
-    for (const user of users) {
-      const unsubscribeUrl = buildUnsubscribeUrl(user.id)
-      const html = renderWeeklyDigest({
-        userName: user.full_name,
-        topPosts: digestPosts,
-        newCourses: digestCourses,
-        siteUrl,
-        unsubscribeUrl,
-      })
-
-      const result = await sendEmail({
-        to: user.email,
-        subject: 'Votre digest hebdomadaire — IAlgeria',
-        html,
-        unsubscribeUrl,
-      })
-
-      if (result) sent++
+    const BATCH_SIZE = 25
+    for (let i = 0; i < users.length; i += BATCH_SIZE) {
+      const batch = users.slice(i, i + BATCH_SIZE)
+      const results = await Promise.allSettled(
+        batch.map((user) => {
+          const unsubscribeUrl = buildUnsubscribeUrl(user.id)
+          const html = renderWeeklyDigest({
+            userName: user.full_name,
+            topPosts: digestPosts,
+            newCourses: digestCourses,
+            siteUrl,
+            unsubscribeUrl,
+          })
+          return sendEmail({
+            to: user.email,
+            subject: 'Votre digest hebdomadaire — IAlgeria',
+            html,
+            unsubscribeUrl,
+          })
+        })
+      )
+      sent += results.filter((r) => r.status === 'fulfilled' && r.value).length
     }
 
     return successResponse({ sent, total: users.length })

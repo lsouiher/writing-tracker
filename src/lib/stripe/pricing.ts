@@ -8,8 +8,8 @@ const PRICE_IDS: Record<string, string> = {
   'maghreb-annual': process.env.STRIPE_PRICE_ANNUAL_MAGHREB || '',
   'canada-monthly': process.env.STRIPE_PRICE_MONTHLY_CANADA || '',
   'canada-annual': process.env.STRIPE_PRICE_ANNUAL_CANADA || '',
-  'west_africa-monthly': process.env.STRIPE_PRICE_MONTHLY_DEFAULT || '',
-  'west_africa-annual': process.env.STRIPE_PRICE_ANNUAL_DEFAULT || '',
+  'west_africa-monthly': process.env.STRIPE_PRICE_MONTHLY_WEST_AFRICA || process.env.STRIPE_PRICE_MONTHLY_MAGHREB || '',
+  'west_africa-annual': process.env.STRIPE_PRICE_ANNUAL_WEST_AFRICA || process.env.STRIPE_PRICE_ANNUAL_MAGHREB || '',
 }
 
 export function getRegionFromCountry(countryCode: string | null): PriceRegion {
@@ -20,6 +20,14 @@ export function getRegionFromCountry(countryCode: string | null): PriceRegion {
 export function getStripePriceId(region: PriceRegion, plan: SubscriptionPlan): string {
   const key = `${region}-${plan}`
   return PRICE_IDS[key] || PRICE_IDS[`default-${plan}`]
+}
+
+// Monthly price in cents by region (single source of truth for MRR calculations)
+export const MONTHLY_PRICE_CENTS: Record<string, number> = {
+  default: 1900,    // 19.00 EUR
+  maghreb: 350,     // 3.50 EUR
+  canada: 2500,     // 25.00 CAD
+  west_africa: 380, // 3.80 EUR
 }
 
 export function getDisplayPrice(region: PriceRegion, plan: SubscriptionPlan): { amount: number; currency: string; label: string } {

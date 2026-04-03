@@ -24,6 +24,16 @@ export async function POST(request: Request) {
       return errorResponse('BAD_REQUEST', 'course_id, title et description sont requis', 400)
     }
 
+    if (title.length > 200) {
+      return errorResponse('BAD_REQUEST', 'Le titre ne peut pas dépasser 200 caractères', 400)
+    }
+    if (description.length > 5000) {
+      return errorResponse('BAD_REQUEST', 'La description ne peut pas dépasser 5000 caractères', 400)
+    }
+    if (submitted_code && submitted_code.length > 65536) {
+      return errorResponse('BAD_REQUEST', 'Le code ne peut pas dépasser 64 Ko', 400)
+    }
+
     const submission = await submitCapstone(supabase, user.id, course_id, {
       title,
       description,

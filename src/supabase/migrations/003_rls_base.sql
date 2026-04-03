@@ -10,10 +10,14 @@ create policy "Users can read own profile"
   on public.users for select
   using (auth.uid() = id);
 
+-- Users can update their own profile but NOT role (prevents self-promotion)
 create policy "Users can update own profile"
   on public.users for update
   using (auth.uid() = id)
-  with check (auth.uid() = id);
+  with check (
+    auth.uid() = id
+    and role = (select role from public.users where id = auth.uid())
+  );
 
 -- Courses: public read for published, admin write
 create policy "Anyone can read published courses"

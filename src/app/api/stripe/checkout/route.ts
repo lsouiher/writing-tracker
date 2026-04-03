@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       metadata: { user_id: user.id },
     }
 
-    // Apply coupon if provided
+    // Apply coupon if provided — usage is incremented in the webhook after successful checkout
     if (couponCode) {
       const { data: coupon } = await supabase
         .from('coupons')
@@ -58,9 +58,11 @@ export async function POST(request: NextRequest) {
         .eq('code', couponCode.toUpperCase())
         .single()
 
-      if (coupon && coupon.current_uses < coupon.max_uses) {
-        // Coupon is mapped to a Stripe coupon with same code
+      if (coupon && coupon.current_uses < coupon.max_uses &&
+          (!coupon.expires_at || new Date(coupon.expires_at) > new Date())) {
         (sessionParams as Record<string, unknown>).discounts = [{ coupon: couponCode.toUpperCase() }]
+        // Store coupon ID in metadata so the webhook can increment usage after payment
+        ;(sessionParams.metadata as Record<string, string>).coupon_id = coupon.id
       }
     }
 
@@ -68,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     return successResponse({ checkout_url: session.url })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Erreur lors de la creation du paiement'
-    return errorResponse('CHECKOUT_ERROR', message, 500)
+    console.error('Checkout error:', err)
+    return errorResponse('CHECKOUT_ERROR', 'Erreur lors de la creation du paiement', 500)
   }
 }

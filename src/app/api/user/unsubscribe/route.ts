@@ -1,17 +1,30 @@
-import { createClient } from '@/lib/supabase/server'
+import { getServiceClient } from '@/lib/supabase/service'
 import { NextRequest, NextResponse } from 'next/server'
+import { createHmac, timingSafeEqual } from 'crypto'
+
+function verifyUnsubscribeToken(uid: string, token: string): boolean {
+  const secret = process.env.UNSUBSCRIBE_SECRET
+  if (!secret) return false
+  const expected = createHmac('sha256', secret).update(uid).digest('hex')
+  try {
+    return timingSafeEqual(Buffer.from(token), Buffer.from(expected))
+  } catch {
+    return false
+  }
+}
 
 export async function GET(request: NextRequest) {
   const uid = request.nextUrl.searchParams.get('uid')
+  const token = request.nextUrl.searchParams.get('token')
 
-  if (!uid) {
+  if (!uid || !token || !verifyUnsubscribeToken(uid, token)) {
     return new NextResponse(renderPage('Lien invalide', 'Le lien de désabonnement est invalide.', false), {
       status: 400,
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     })
   }
 
-  const supabase = await createClient()
+  const supabase = getServiceClient()
   const { error } = await supabase
     .from('users')
     .update({ email_opt_out: true })
@@ -33,12 +46,13 @@ export async function GET(request: NextRequest) {
 // One-click unsubscribe via POST (RFC 8058)
 export async function POST(request: NextRequest) {
   const uid = request.nextUrl.searchParams.get('uid')
+  const token = request.nextUrl.searchParams.get('token')
 
-  if (!uid) {
-    return NextResponse.json({ error: 'Missing uid' }, { status: 400 })
+  if (!uid || !token || !verifyUnsubscribeToken(uid, token)) {
+    return NextResponse.json({ error: 'Invalid unsubscribe link' }, { status: 400 })
   }
 
-  const supabase = await createClient()
+  const supabase = getServiceClient()
   await supabase.from('users').update({ email_opt_out: true }).eq('id', uid)
 
   return NextResponse.json({ unsubscribed: true })

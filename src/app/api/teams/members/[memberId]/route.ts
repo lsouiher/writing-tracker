@@ -22,6 +22,17 @@ export async function DELETE(
       return errorResponse('FORBIDDEN', "Vous n'avez pas de licence équipe active", 403)
     }
 
+    // Verify the member belongs to this admin's team
+    const { data: member } = await supabase
+      .from('team_members')
+      .select('team_license_id')
+      .eq('id', memberId)
+      .single()
+
+    if (!member || member.team_license_id !== license.id) {
+      return errorResponse('FORBIDDEN', "Ce membre n'appartient pas à votre équipe", 403)
+    }
+
     await removeTeamMember(supabase, memberId)
 
     return successResponse({ removed: true })

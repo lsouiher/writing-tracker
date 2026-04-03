@@ -48,6 +48,9 @@ export async function sendEmail({ to, subject, html, unsubscribeUrl }: SendEmail
 
 export function buildUnsubscribeUrl(userId: string): string {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ialgeria.com'
-  const token = Buffer.from(`${userId}:${Date.now()}`).toString('base64url')
+  const secret = process.env.UNSUBSCRIBE_SECRET
+  if (!secret) throw new Error('UNSUBSCRIBE_SECRET environment variable is required')
+  const { createHmac } = require('crypto') as typeof import('crypto')
+  const token = createHmac('sha256', secret).update(userId).digest('hex')
   return `${baseUrl}/api/user/unsubscribe?token=${token}&uid=${userId}`
 }

@@ -1,27 +1,72 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
 import { VideoPlayer } from '@/components/video/video-player'
 import { TranscriptViewer } from '@/components/video/transcript-viewer'
 import { AiTutorChat } from '@/components/ai-tutor/chat-sidebar'
 import { Button } from '@/components/ui/button'
 
 export default function LessonPage() {
+  const params = useParams()
+  const lessonSlug = params.lessonSlug as string
+
   const [currentTime, setCurrentTime] = useState(0)
   const [showTutor, setShowTutor] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  // In production, this data comes from the /api/lessons/[slug]/video endpoint
-  // For now, this is a placeholder client component shell
-  const videoUrl = ''
-  const transcript = ''
-  const resumePosition = 0
-  const lessonId = '' // Loaded from API
-  const isPro = false // Loaded from subscription check
+  const [videoUrl, setVideoUrl] = useState('')
+  const [transcript, setTranscript] = useState('')
+  const [resumePosition, setResumePosition] = useState(0)
+  const [lessonId, setLessonId] = useState('')
+  const [isPro, setIsPro] = useState(false)
+  const [lessonTitle, setLessonTitle] = useState('')
 
-  const handleProgress = useCallback((position: number, watched: number) => {
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [videoRes, dashRes] = await Promise.all([
+          fetch(`/api/lessons/${lessonSlug}/video`),
+          fetch('/api/dashboard'),
+        ])
+
+        if (videoRes.ok) {
+          const { data } = await videoRes.json()
+          setVideoUrl(data.video_url || '')
+          setTranscript(data.transcript_fr || '')
+          setResumePosition(data.resume_position_seconds || 0)
+          setLessonId(data.lesson_id || lessonSlug)
+          setLessonTitle(data.title || '')
+        }
+
+        if (dashRes.ok) {
+          const { data } = await dashRes.json()
+          setIsPro(data.subscription?.status === 'active' || data.subscription?.status === 'trialing')
+        }
+      } catch {
+        // Silent failure — page renders with empty state
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadData()
+  }, [lessonSlug])
+
+  const handleProgress = useCallback((position: number, _watched: number) => {
     setCurrentTime(position)
     // Debounced save to /api/progress
   }, [])
+
+  if (loading) {
+    return (
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <div className="animate-pulse space-y-4">
+          <div className="bg-surface-alt rounded-xl h-[400px]" />
+          <div className="bg-surface-alt rounded-xl h-8 w-1/3" />
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
@@ -35,7 +80,7 @@ export default function LessonPage() {
           />
           <div className="bg-surface rounded-xl border border-border p-6">
             <div className="flex items-center justify-between">
-              <h1 className="font-display text-2xl mb-2">Titre de la lecon</h1>
+              <h1 className="font-display text-2xl mb-2">{lessonTitle || 'Leçon'}</h1>
               <Button
                 variant="ghost"
                 size="sm"
@@ -45,9 +90,6 @@ export default function LessonPage() {
                 {showTutor ? 'Transcription' : 'Tuteur IA'}
               </Button>
             </div>
-            <p className="text-sm text-muted">
-              Description de la lecon chargee dynamiquement.
-            </p>
           </div>
         </div>
 

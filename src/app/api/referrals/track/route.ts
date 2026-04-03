@@ -1,13 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import { getServiceClient } from '@/lib/supabase/service'
 import { successResponse, errorResponse } from '@/lib/api/response'
-import { createClient as createServiceClient } from '@supabase/supabase-js'
-
-function getServiceSupabase() {
-  return createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
 
 // POST /api/referrals/track — called after signup to link referral
 export async function POST(request: Request) {
@@ -23,7 +16,7 @@ export async function POST(request: Request) {
     return errorResponse('INVALID_CODE', 'Code de parrainage invalide')
   }
 
-  const serviceClient = getServiceSupabase()
+  const serviceClient = getServiceClient()
 
   // Look up referrer by referral_code
   const { data: referrer } = await serviceClient

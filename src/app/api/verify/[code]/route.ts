@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getServiceClient } from '@/lib/supabase/service'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import { getCertificateByCode } from '@/lib/supabase/queries/certificates'
 
@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { code } = await params
-    const supabase = await createClient()
+    const supabase = getServiceClient()
     const certificate = await getCertificateByCode(supabase, code)
 
     if (!certificate) {

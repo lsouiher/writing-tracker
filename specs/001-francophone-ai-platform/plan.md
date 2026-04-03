@@ -152,6 +152,6 @@ src/
 
 - **UNRESOLVED:** 0 decisions pending
 - **SCOPE ACCEPTED:** AI personalized paths, living skill profiles, demand validation hooks, lesson summaries, streak counter, simplify button
-- **SCOPE DEFERRED:** Community forums, B2B team licenses, referral program
+- **SCOPE DEFERRED (later implemented):** Community forums (Phase 6), B2B team licenses (Phase 7), referral program (Phase 8) — all three were ultimately built and shipped
 - **ENG ADDITIONS:** JSONB validation + fallback on AI responses, shared Claude client wrapper (`lib/ai/claude-client.ts`), tests as co-requirement + 5 E2E tasks, eager loading on dashboard queries
 - **VERDICT:** CEO + ENG CLEARED. Ready to implement.

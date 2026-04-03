@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import { generateSignedVideoUrl } from '@/lib/bunny/signed-urls'
+import { getUserTier } from '@/lib/supabase/queries/subscriptions'
 
 export async function GET(
   _request: Request,
@@ -27,6 +28,14 @@ export async function GET(
     // Free preview check: non-preview lessons require auth
     if (!lesson.is_free_preview && !user) {
       return errorResponse('UNAUTHORIZED', 'Connectez-vous pour acceder a cette lecon', 401)
+    }
+
+    // Pro-tier check: non-preview lessons require Pro subscription
+    if (!lesson.is_free_preview && user) {
+      const tier = await getUserTier(supabase, user.id)
+      if (tier !== 'pro') {
+        return errorResponse('FORBIDDEN', 'Reservé aux abonnés Pro', 403)
+      }
     }
 
     // Generate signed video URL

@@ -50,7 +50,7 @@ export function AiTutorChat({ lessonId, isPro }: AiTutorChatProps) {
       const response = await fetch('/api/ai-tutor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lessonId, question, history }),
+        body: JSON.stringify({ lesson_id: lessonId, question, session_messages: history }),
       })
 
       // Update rate limit info from headers

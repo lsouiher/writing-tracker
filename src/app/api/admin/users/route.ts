@@ -31,7 +31,13 @@ export async function GET(request: Request) {
 
   if (role) query = query.eq('role', role)
   if (country) query = query.eq('country', country)
-  if (search) query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`)
+  if (search) {
+    // Escape special PostgREST filter characters to prevent injection
+    const sanitized = search.replace(/[%_.*(),]/g, '')
+    if (sanitized) {
+      query = query.or(`email.ilike.%${sanitized}%,full_name.ilike.%${sanitized}%`)
+    }
+  }
 
   const { data: users, count, error } = await query
     .order('created_at', { ascending: false })

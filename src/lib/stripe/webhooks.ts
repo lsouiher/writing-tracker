@@ -1,14 +1,11 @@
-import { createClient } from '@supabase/supabase-js'
+import { getServiceClient } from '@/lib/supabase/service'
 import type Stripe from 'stripe'
 import { applyReferralReward } from './referrals'
-
-// Use service role for webhook processing (bypasses RLS)
-function getServiceClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-}
+import { sendEmail } from '@/lib/email/send'
+import { renderTrialStarted } from '@/lib/email/templates/trial-started'
+import { renderPaymentFailed } from '@/lib/email/templates/payment-failed'
+import { renderPaymentSuccess } from '@/lib/email/templates/payment-success'
+import { renderSubscriptionCanceled } from '@/lib/email/templates/subscription-canceled'
 
 export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const supabase = getServiceClient()
@@ -16,6 +13,14 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
   const subscriptionId = session.subscription as string
 
   if (!userId || !subscriptionId) return
+
+  const trialEnd = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+
+  // Increment coupon usage now that payment is confirmed
+  const couponId = session.metadata?.coupon_id
+  if (couponId) {
+    await supabase.rpc('increment_coupon_usage', { p_coupon_id: couponId })
+  }
 
   await supabase.from('subscriptions').upsert({
     user_id: userId,
@@ -25,9 +30,26 @@ export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) 
     status: 'trialing',
     currency: (session.currency || 'eur').toLowerCase(),
     price_region: session.metadata?.region || 'default',
-    trial_ends_at: null,
-    current_period_end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    trial_ends_at: trialEnd.toISOString(),
+    current_period_end: trialEnd.toISOString(),
   }, { onConflict: 'stripe_subscription_id' })
+
+  // Send trial-started email
+  const { data: user } = await supabase
+    .from('users')
+    .select('email, full_name')
+    .eq('id', userId)
+    .single()
+
+  if (user?.email) {
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ialgeria.com'
+    const html = renderTrialStarted({
+      userName: user.full_name || 'Apprenant',
+      trialEndDate: trialEnd.toLocaleDateString('fr-FR'),
+      siteUrl,
+    })
+    sendEmail({ to: user.email, subject: 'Votre essai Pro de 7 jours est actif — IAlgeria', html }).catch(() => {})
+  }
 }
 
 export async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
@@ -56,10 +78,39 @@ export async function handleSubscriptionUpdated(subscription: Stripe.Subscriptio
 export async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const supabase = getServiceClient()
 
+  // Get subscription info before updating
+  const { data: existingSub } = await supabase
+    .from('subscriptions')
+    .select('user_id, current_period_end')
+    .eq('stripe_subscription_id', subscription.id)
+    .single()
+
   await supabase
     .from('subscriptions')
     .update({ status: 'expired' })
     .eq('stripe_subscription_id', subscription.id)
+
+  // Send cancellation email
+  if (existingSub) {
+    const { data: user } = await supabase
+      .from('users')
+      .select('email, full_name')
+      .eq('id', existingSub.user_id)
+      .single()
+
+    if (user?.email) {
+      const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ialgeria.com'
+      const endDate = existingSub.current_period_end
+        ? new Date(existingSub.current_period_end).toLocaleDateString('fr-FR')
+        : 'immediatement'
+      const html = renderSubscriptionCanceled({
+        userName: user.full_name || 'Apprenant',
+        accessEndDate: endDate,
+        siteUrl,
+      })
+      sendEmail({ to: user.email, subject: 'Votre abonnement Pro a ete annule — IAlgeria', html }).catch(() => {})
+    }
+  }
 }
 
 export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
@@ -73,7 +124,29 @@ export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     .update({ status: 'past_due' })
     .eq('stripe_subscription_id', subscriptionId)
 
-  // TODO: Send payment-failed email via Resend
+  // Send payment-failed email
+  const { data: sub } = await supabase
+    .from('subscriptions')
+    .select('user_id')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single()
+
+  if (sub) {
+    const { data: user } = await supabase
+      .from('users')
+      .select('email, full_name')
+      .eq('id', sub.user_id)
+      .single()
+
+    if (user?.email) {
+      const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ialgeria.com'
+      const html = renderPaymentFailed({
+        userName: user.full_name || 'Apprenant',
+        siteUrl,
+      })
+      sendEmail({ to: user.email, subject: 'Echec de paiement — IAlgeria', html }).catch(() => {})
+    }
+  }
 }
 
 export async function handleInvoicePaid(invoice: Stripe.Invoice) {
@@ -92,6 +165,33 @@ export async function handleInvoicePaid(invoice: Stripe.Invoice) {
     .from('subscriptions')
     .update(updates)
     .eq('stripe_subscription_id', subscriptionId)
+
+  // Send payment-success email
+  const { data: paidSub } = await supabase
+    .from('subscriptions')
+    .select('user_id, plan, currency')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single()
+
+  if (paidSub) {
+    const { data: user } = await supabase
+      .from('users')
+      .select('email, full_name')
+      .eq('id', paidSub.user_id)
+      .single()
+
+    if (user?.email) {
+      const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ialgeria.com'
+      const amountPaid = invoice.amount_paid ? `${(invoice.amount_paid / 100).toFixed(2)} ${(paidSub.currency || 'EUR').toUpperCase()}` : ''
+      const html = renderPaymentSuccess({
+        userName: user.full_name || 'Apprenant',
+        plan: paidSub.plan || 'monthly',
+        amount: amountPaid,
+        siteUrl,
+      })
+      sendEmail({ to: user.email, subject: 'Paiement confirme — IAlgeria', html }).catch(() => {})
+    }
+  }
 
   // Check for pending referral and complete it
   await processReferralReward(supabase, subscriptionId)
@@ -120,19 +220,31 @@ async function processReferralReward(
 
   if (!referral) return
 
-  // Get the referrer's Stripe customer ID
+  // Get the referrer's Stripe customer ID and region
   const { data: referrerSub } = await supabase
     .from('subscriptions')
-    .select('stripe_customer_id')
+    .select('stripe_customer_id, price_region')
     .eq('user_id', referral.referrer_id)
     .in('status', ['active', 'trialing'])
     .single()
 
   if (!referrerSub) return
 
-  // Apply Stripe credits to both parties
+  // Get the referee's region
+  const { data: refereeSub } = await supabase
+    .from('subscriptions')
+    .select('price_region')
+    .eq('stripe_subscription_id', stripeSubscriptionId)
+    .single()
+
+  // Apply Stripe credits to both parties (region-aware amounts)
   try {
-    await applyReferralReward(referrerSub.stripe_customer_id, subscription.stripe_customer_id)
+    await applyReferralReward(
+      referrerSub.stripe_customer_id,
+      subscription.stripe_customer_id,
+      referrerSub.price_region || 'default',
+      refereeSub?.price_region || 'default'
+    )
 
     // Mark referral as completed with reward applied
     await supabase
@@ -150,6 +262,7 @@ async function processReferralReward(
       .from('referrals')
       .update({
         status: 'completed',
+        reward_applied: false,
         completed_at: new Date().toISOString(),
       })
       .eq('id', referral.id)

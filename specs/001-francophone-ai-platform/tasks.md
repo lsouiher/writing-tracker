@@ -45,7 +45,7 @@
 - [x] T014 [P] Implement Supabase server client factory in `src/lib/supabase/server.ts` using @supabase/ssr with cookie handling
 - [x] T015 [P] Implement Supabase browser client factory in `src/lib/supabase/client.ts`
 - [x] T016 Implement auth middleware in `src/middleware.ts` that refreshes Supabase session on every request and protects `/dashboard`, `/admin` routes
-- [ ] T017 [P] Generate Supabase TypeScript types and save to `src/types/database.ts` using `npx supabase gen types`
+- [x] T017 [P] Generate Supabase TypeScript types and save to `src/types/database.ts` using `npx supabase gen types`
 - [x] T018 [P] Implement consistent API response helpers (`successResponse`, `errorResponse`) in `src/lib/api/response.ts` per contracts/api-routes.md response shape
 - [x] T019 [P] Create shared UI primitives: Button, Card, Badge, Input, Modal components in `src/components/ui/`
 - [x] T020 Create seed data script with sample courses, modules, and lessons in `src/supabase/seed.sql`
@@ -110,7 +110,7 @@
 - [x] T053 [US2] Implement Stripe webhook handler in `src/app/api/webhooks/stripe/route.ts` with signature verification, handling all 6 events per contracts/webhook-contracts.md (checkout.session.completed, subscription.created/updated/deleted, invoice.payment_failed, invoice.paid)
 - [x] T054 [US2] Implement subscription state sync logic in `src/lib/stripe/webhooks.ts`: process each webhook event type, update subscriptions table, trigger email notifications
 - [x] T055 [P] [US2] Create PaywallPrompt component in `src/components/ui/paywall-prompt.tsx` shown when free users access locked features (labs, quizzes, certificates, AI tutor)
-- [ ] T056 [P] [US2] Create email templates in `src/lib/email/templates/`: welcome.tsx, trial-started.tsx, trial-ending.tsx (day 5), payment-failed.tsx, payment-success.tsx, subscription-canceled.tsx
+- [x] T056 [P] [US2] Create email templates in `src/lib/email/templates/`: welcome.tsx, trial-started.tsx, trial-ending.tsx (day 5), payment-failed.tsx, payment-success.tsx, subscription-canceled.tsx
 - [x] T057 [P] [US2] Implement email sending functions in `src/lib/email/send.ts` using Resend SDK with French-first templates
 - [x] T058 [US2] Build pricing page in `src/app/(marketing)/pricing/page.tsx` showing Free vs Pro comparison, PPP-adjusted prices detected via Vercel Edge geolocation, monthly/annual toggle
 - [x] T059 [US2] Add geolocation-based country detection in `src/middleware.ts` using Vercel Edge `request.geo` and pass country via cookie/header

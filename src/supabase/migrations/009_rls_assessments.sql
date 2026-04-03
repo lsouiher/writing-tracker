@@ -63,6 +63,5 @@ create policy "Users can read own certificates"
   on public.certificates for select
   using (auth.uid() = user_id);
 
-create policy "Public can verify certificates"
-  on public.certificates for select
-  using (true);
+-- Public certificate verification is handled via API route using service role
+-- No open SELECT policy needed — the verify endpoint uses the service client

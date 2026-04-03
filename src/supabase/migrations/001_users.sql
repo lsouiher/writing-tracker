@@ -1,24 +1,6 @@
 -- T011: Users table
-create table public.users (
-  id uuid primary key references auth.users(id) on delete cascade,
-  email text not null unique,
-  full_name text not null,
-  avatar_url text,
-  country text,
-  language text not null default 'fr' check (language in ('fr', 'en')),
-  role text not null default 'student' check (role in ('student', 'team_admin', 'admin')),
-  referral_code text not null default nanoid(10) unique,
-  referred_by uuid references public.users(id),
-  deleted_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
 
--- Indexes
-create index idx_users_country on public.users(country);
-create index idx_users_referred_by on public.users(referred_by);
-
--- nanoid function for referral codes
+-- nanoid function for referral codes (must be defined before CREATE TABLE)
 create or replace function nanoid(size int default 21)
 returns text as $$
 declare
@@ -34,6 +16,26 @@ begin
   return id;
 end;
 $$ language plpgsql volatile;
+
+create table public.users (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text not null unique,
+  full_name text not null,
+  avatar_url text,
+  country text,
+  language text not null default 'fr' check (language in ('fr', 'en')),
+  role text not null default 'student' check (role in ('student', 'team_admin', 'admin')),
+  referral_code text not null default nanoid(10) unique,
+  referred_by uuid references public.users(id),
+  deleted_at timestamptz,
+  email_opt_out boolean default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Indexes
+create index idx_users_country on public.users(country);
+create index idx_users_referred_by on public.users(referred_by);
 
 -- Auto-create user profile on signup
 create or replace function public.handle_new_user()

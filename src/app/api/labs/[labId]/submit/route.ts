@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import { getUserTier } from '@/lib/supabase/queries/subscriptions'
-import { getLabByModule } from '@/lib/supabase/queries/labs'
 import { saveLabSubmission } from '@/lib/supabase/queries/labs'
 import { checkApiRateLimit } from '@/lib/redis/api-rate-limit'
 import { NextRequest } from 'next/server'
@@ -41,6 +40,10 @@ export async function POST(
 
     if (!code || !language) {
       return errorResponse('BAD_REQUEST', 'Le code et le langage sont requis', 400)
+    }
+
+    if (code.length > 65536) {
+      return errorResponse('BAD_REQUEST', 'Le code ne peut pas dépasser 64 Ko', 400)
     }
 
     // Fetch the lab for test cases

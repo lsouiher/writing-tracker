@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getServiceClient } from '@/lib/supabase/service'
 import { errorResponse } from '@/lib/api/response'
 import { getUserTier } from '@/lib/supabase/queries/subscriptions'
 import { checkAiTutorRateLimit } from '@/lib/redis/rate-limit'
@@ -6,9 +7,9 @@ import { streamTutorResponse } from '@/lib/ai-tutor/client'
 import { buildSystemPrompt, isOffTopicResponse } from '@/lib/ai-tutor/prompts'
 
 interface AiTutorRequestBody {
-  lessonId: string
+  lesson_id: string
   question: string
-  history?: Array<{ role: 'user' | 'assistant'; content: string }>
+  session_messages?: Array<{ role: 'user' | 'assistant'; content: string }>
 }
 
 export async function POST(request: Request) {
@@ -21,10 +22,14 @@ export async function POST(request: Request) {
     }
 
     const body = (await request.json()) as AiTutorRequestBody
-    const { lessonId, question, history = [] } = body
+    const { lesson_id: lessonId, question, session_messages: history = [] } = body
 
     if (!question?.trim()) {
       return errorResponse('BAD_REQUEST', 'Veuillez poser une question.', 400)
+    }
+
+    if (question.length > 2000) {
+      return errorResponse('BAD_REQUEST', 'La question ne peut pas dépasser 2000 caractères.', 400)
     }
 
     if (!lessonId) {
@@ -110,7 +115,8 @@ export async function POST(request: Request) {
         const usage = await getUsage()
         const wasOffTopic = isOffTopicResponse(fullResponse)
 
-        await supabase.from('ai_tutor_logs').insert({
+        const serviceClient = getServiceClient()
+        await serviceClient.from('ai_tutor_logs').insert({
           user_id: user.id,
           lesson_id: lessonId,
           question,
